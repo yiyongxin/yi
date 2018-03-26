@@ -4,7 +4,6 @@
 * date:     2018-03-14 
 ****************************************/ 
 
-#define _LOG4CPLUS
 #ifdef _LOG4CPLUS
 #include <log4cplus/logger.h>
 #include <log4cplus/configurator.h>

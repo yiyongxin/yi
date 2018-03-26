@@ -4,6 +4,8 @@ cmake_minimum_required (VERSION 2.8)
 project (yisrv)
 add_compile_options(-std=c++11)
 
+add_definitions(_LOG4CPLUS)
+
 # aux_source_directory(. utils_src)     #查找路径下所有源代码
 
 message("${CMAKE_BUILD_TYPE}")
