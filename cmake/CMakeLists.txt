@@ -1,7 +1,8 @@
 # CMake 最低版本号要求
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 3.0)
 # 项目信息
 project (yisrv)
+
 add_compile_options(-std=c++11)
 
 add_definitions(_LOG4CPLUS)

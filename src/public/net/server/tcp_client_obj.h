@@ -1,3 +1,9 @@
+/*************************************** 
+* brief:    tcp server客户端链表存储的客户端类型
+* author:   易雍鑫
+* date:     2018-03-26
+****************************************/ 
+
 #ifndef TCP_CLIENT_OBJ_H_
 #define TCP_CLIENT_OBJ_H_
 
