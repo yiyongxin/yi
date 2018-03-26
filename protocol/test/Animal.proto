@@ -1,0 +1,232 @@
+ syntax = "proto3";
+ 
+ package Animal;
+ enum ProtocolCmd
+ {
+//=================================通用协议=================================
+	zero 					= 		0;		//无用位
+	CSJoinRoomReq			= 		1001;	//请求加入房间
+	SCJoinRoomRep			=		1002;	//请求加入房间
+	CSLogOutReq 			=		1003;	//退出
+	SCLogOutRep 			=		1004;	//退出
+	CSCCommonReq 			=		1005;	//协议转发
+	SCCCommonRep 			=		1006;	//协议转发		
+	CSCReceiveRep 			=		1007;	//协议接受	
+	CSHeartBeatReq 			=		1010;	//心跳协议请求
+	SCHeartBeatRep 			=		1011;	//心跳协议返回
+	CSSynSvrClockReq		=		1012;	//同步服务器时钟到客户端请求
+	SCSynSvrClockRep		=		1013;	//同步服务器时钟到客户端返回
+	CSARoundOverReq 		=		1014;	//游戏结束
+	SCARoundOverRep 		=		1015;	//游戏结束
+	CSProgressRateReq		= 		1016;	//加载进度
+	SCProgressRateRep		= 		1017;	//加载进度
+	SCGameStartRep			= 		1018;	//游戏开始
+	CSGameDataResetReq 		=		1019; 	//请求游戏数据
+	CSGameTimeReq		    = 		1020;	//上传游戏得分
+    SCGameTimeRep			= 		1021; 	//上传游戏得分
+	CSPeaceReq 				=		1022; 	//请求平局
+	SCAskPeaceRep 			=		1023; 	//询问对手是否平局 
+	CSAskPeaceReq 			=		1024; 	//平局询问结果 
+	SCPeaceReturnRep 		=		1025; 	//平局询问结果返回 
+	CSSurrenderReq 			=		1026; 	//认输	
+	SCGameOverRep 			=		1027; 	//服务器推送游戏结束确认
+	CSGameOverReq			=		1028; 	//游戏结束确认返回
+	CSGetTipsReq 		    =		1029;	//获取游戏显示Tips内容
+	SCGetTipsRep 		    =		1030;	//获取游戏显示Tips内容
+//================================逻辑协议==================================
+	SCGameDataResetRep 		=		2001; 	//接受游戏数据
+	CSActionReq				=		2002; 	//行动请求
+	SCActionRep				=		2003; 	//行动返回
+	SCActionResultRep		= 		2004;	//通知双方成功行动的结果
+}
+
+//==========================逻辑协议定义===============================
+
+message pkgSCGameDataResetRep
+{
+	int32 first = 2; 	//是否先手  1.先手 2.后手
+}
+
+message Pos
+{
+	int32 x = 1;
+	int32 y = 2;
+}
+
+message pkgCSActionReq
+{
+	int32 type = 1;	//行动类型编号  1.翻棋  2.移动棋子
+	Pos HoldPos = 2;	//被操作棋子位置 （翻棋位置或被移动棋子位置）
+	Pos TargetPos = 3;	//移动的目标位置
+}
+
+message pkgSCActionRep
+{
+	int32 ok = 1;	//行动是否成功	0.成功 1.失败
+}
+
+message pkgSCActionResultRep
+{
+	int32 type = 1;	//行动类型编号  1.翻棋  2.移动棋子
+	Pos HoldPos = 2;	//被操作棋子位置 （翻棋位置或被移动棋子位置）
+	Pos TargetPos = 3;	//移动的目标位置
+	int32 colour = 4;	//棋子颜色  1.黑色  2.白色
+	int32 index = 5;	//棋子编号  1.象 2.狮 3.虎 4.豹 5.狼 6.狗 7.猫 8.鼠
+	int32 Hold = 6;		//是否是该玩家的回合 0.不做处理 1.是 2.不是
+}
+
+//==========================通用协议定义===============================
+
+enum ERROCODE 
+{
+	ERROCODE_NONE = 0;
+	SUCCESSFUL = 1;
+}
+
+message pkgCSJoinRoomReq
+{
+   int64 iroomid 	= 1; //房间号 玩家id在消息头种赋值
+   int32 userId 	= 2; //玩家id
+   string token 	= 3; //玩家toten
+}
+message pkgSCJoinRoomRep
+{
+   int32 ok = 1; //1成功 0失败
+}
+
+message pkgCSLogOutReq
+{
+	int32 ok = 1;
+} 
+
+message pkgSCLogOutRep
+{
+	int32 ok = 1;
+}
+
+message pkgCSCCommonReq
+{
+   int32 ok = 1;
+   bytes protocol = 2;
+} 
+
+message pkgSCCCommonRep
+{
+   int32 ok = 1;
+}
+
+message pkgCSCReceiveRep
+{
+   int32 nTimes = 1;
+   bytes protocol = 2;
+}
+
+message pkgCSHeartBeatReq
+{
+   int32 ok = 1; //任意值
+} 
+message pkgSCHeartBeatRep
+{
+   int32 itimes = 1; //
+}	
+
+message pkgCSSynSvrClockReq
+{
+	int64 time = 1; //单位毫秒
+} 
+
+message pkgSCSynSvrClockRep
+{
+	int64 c_time = 1; //客户端时间戳 单位毫秒
+    int64 s_time = 2; //服务器端时间戳 单位毫秒
+} 
+
+message pkgCSARoundOverReq
+{
+	int32 ok = 1; //任意值
+}
+message pkgSCARoundOverRep
+{
+	int32 ok = 1; //任意值
+} 
+
+message pkgCSProgressRateReq//加载进度
+{
+	int32 rate = 1; //0到100
+}
+
+message pkgSCProgressRateRep//加载进度
+{
+	int32 rate = 1; //0到100
+	int32 userid = 2; //玩家id
+}
+
+message pkgSCGameStartRep//游戏开始
+{
+	int64 time = 1; //单位毫秒
+}
+
+ message pkgCSGameDataResetReq
+{
+   int32 ok = 1;
+}
+
+message pkgCSGameTimeReq//上传结果 游戏所花的时间
+{
+   int32 time = 1;
+}
+
+message pkgSCGameTimeRep//上传结果 游戏返回
+{
+   int32 time = 1;
+}
+
+message pkgCSPeaceReq	//请求平局
+{
+    int32 ok = 1;
+}
+
+message pkgSCAskPeaceRep	//询问对手是否平局
+{
+    int32 ok = 1;
+}
+
+message pkgCSAskPeaceReq	//平局询问结果
+{
+    int32 ok = 1;
+}
+
+message pkgSCPeaceReturnRep	//平局询问结果返回
+{
+    int32 ok = 1;
+}
+
+message pkgCSSurrenderReq
+{	 
+	int32 ok = 1;
+}
+
+message pkgCSGameOverRep
+{	 
+	int32 ok = 1;
+}
+
+message pkgCSGetTipsReq
+{
+	int32 ok = 1;
+}
+
+message pkgSCGetTipsRep
+{
+    string tips = 1;
+}
+
+message pkgCSGameOverReq
+{	 
+	int32 ok = 1;
+}
+
+message pkgSCGameOverRep
+{	 
+	int32 ok = 1;
+}

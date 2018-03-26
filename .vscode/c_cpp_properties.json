@@ -1,0 +1,43 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "z:/include",
+                "z:/include/c++/5.4.0",
+                "z:/include/x86_64-linux-gnu/c++/5.4.0",
+                "z:/include/x86_64-linux-gnu",
+                "z:/include/x86_64-linux-gnu/5.4.0",
+                "z:/lib/gcc/x86_64-linux-gnu/5.4.0/include",
+                "${workspaceRoot}/include",
+                "${workspaceRoot}",
+                "${workspaceRoot}/src/public"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "__POSIX__ ",
+                "__x86_64__ ",
+                "__linux__",
+                "_LOG4CPLUS"
+            ],
+            "intelliSenseMode": "clang-x64",
+            "browse": {
+                "path": [
+                    "z:/include",
+                    "z:/include/c++/5.4.0",
+                    "z:/include/x86_64-linux-gnu/c++/5.4.0",
+                    "z:/include/x86_64-linux-gnu",
+                    "z:/include/x86_64-linux-gnu/5.4.0",
+                    "z:/lib/gcc/x86_64-linux-gnu/5.4.0/include",
+                    "${workspaceRoot}/include",
+                    "${workspaceRoot}",
+                    "${workspaceRoot}/src/public"                
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
+        }
+    ],
+    "version": 3
+}

@@ -1,0 +1,61 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"uv.h": "c",
+			"string.h": "c",
+			"types.h": "c",
+			"int-ll64.h": "c",
+			"bitsperlong.h": "c",
+			"stddef.h": "c",
+			"iostream": "c",
+			"stdlib.h": "c",
+			"thread": "cpp",
+			"unordered_map": "cpp",
+			"array": "cpp",
+			"*.tcc": "cpp",
+			"cctype": "cpp",
+			"chrono": "cpp",
+			"clocale": "cpp",
+			"cmath": "cpp",
+			"cstdint": "cpp",
+			"cstdio": "cpp",
+			"cstdlib": "cpp",
+			"ctime": "cpp",
+			"cwchar": "cpp",
+			"cwctype": "cpp",
+			"exception": "cpp",
+			"functional": "cpp",
+			"initializer_list": "cpp",
+			"iosfwd": "cpp",
+			"istream": "cpp",
+			"limits": "cpp",
+			"memory": "cpp",
+			"new": "cpp",
+			"ostream": "cpp",
+			"ratio": "cpp",
+			"stdexcept": "cpp",
+			"streambuf": "cpp",
+			"system_error": "cpp",
+			"tuple": "cpp",
+			"type_traits": "cpp",
+			"typeinfo": "cpp",
+			"utility": "cpp",
+			"mutex": "cpp",
+			"map": "cpp",
+			"sstream": "cpp",
+			"atomic": "cpp",
+			"hash_map": "cpp",
+			"hash_set": "cpp",
+			"condition_variable": "cpp",
+			"cstdarg": "cpp",
+			"cstddef": "cpp",
+			"fstream": "cpp"
+		},
+		"clang.executable": "D:\\Engineering\\Software\\LLVM\\bin\\clang.exe"
+	}
+}
