@@ -16,7 +16,7 @@ inline std::string GetUVError(int errcode)
     return std::move(err);  
 }  
 
-tcp_server::tcp_server(uv_loop_t* loop)  
+tcp_server::tcp_server(uv_loop_t* loop)
     :_newconcb(nullptr), _isinit(false),_loop(loop)
 {    
      
