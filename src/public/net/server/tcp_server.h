@@ -15,7 +15,6 @@ class tcp_server
 {
 public:
     typedef void (*newcon_cb)(int cid);
-    typedef void (*crecv_cb)(const char* buf, int size, void* userdata);
 public:
     tcp_server(uv_loop_t* loop);
     virtual ~tcp_server();

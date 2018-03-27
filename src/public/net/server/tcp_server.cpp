@@ -9,7 +9,7 @@
 #include "tcp_server.h"
 #include "logifs.h"
 
-inline std::string GetUVError(int errcode)
+std::string GetUVError(int errcode)
 {
     std::string err = uv_err_name(errcode);
     err = err + ": " + uv_strerror(errcode);
@@ -52,6 +52,11 @@ bool tcp_server::init()
     }
     _isinit = true;
     _server.data = this;
+    //errcode = uv_tcp_keepalive(&_server, 1, 60);//调用此函数后后续函数会调用出错
+    //if (errcode) {
+    //  _errstr = GetUVError(errcode);
+    //  return false;
+    //}
     return true;
 }
 
