@@ -56,6 +56,5 @@
 			"cstddef": "cpp",
 			"fstream": "cpp"
 		},
-		"clang.executable": "D:\\Engineering\\Software\\LLVM\\bin\\clang.exe"
 	}
 }
