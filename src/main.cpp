@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <dlfcn.h>  
+#include <dlfcn.h>
 
 typedef void*(*Test)();
 
@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     int *i = NULL;
     i = (int*)testptr();
     printf("i: %d\n", *i);
-    delete i;    
+    delete i;
     printf("i: %d\n", *i);
     return 0;
 }

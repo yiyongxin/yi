@@ -3,7 +3,7 @@
 // #include <string.h>
 // #include <ctype.h>
 
-// extern "C" 
+// extern "C"
 // {
 // #include "uv.h"
 // }
@@ -17,7 +17,7 @@
 //     buf->base = (char*) malloc(suggested_size);
 //     buf->len = suggested_size;
 // }
- 
+
 // void on_send(uv_udp_send_t *req, int status)
 // {
 //     if (status < 0) {
@@ -61,7 +61,7 @@
 //     uv_udp_recv_stop(req);
 // }
 
-// int main() 
+// int main()
 // {
 //     printf("buliding udp\n");
 //     loop = uv_default_loop();
