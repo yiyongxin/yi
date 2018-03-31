@@ -19,6 +19,7 @@ public:
     tcp_server(uv_loop_t* loop);
     virtual ~tcp_server();
 private:
+    std::string svr_name;  //该服务的名字
     uv_loop_t *_loop;      //libuv主循环
     uv_tcp_t _server;      //服务器句柄
     bool _isinit;          //是否已初始化
@@ -41,11 +42,12 @@ private:
     int get_cid();  //获取可用客户端编号
     bool delete_client(int cid);   //删除客户端
 private:
+    static void sever_close_cb(uv_handle_t *handle);
+    static void client_close_cb(uv_handle_t *handle);
+    
     static void AfterServerRecv(uv_stream_t *client, ssize_t nread, const uv_buf_t* buf);
     static void AfterSend(uv_write_t *req, int status);
     static void onAllocBuffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf);
-    static void AfterServerClose(uv_handle_t *handle);
-    static void AfterClientClose(uv_handle_t *handle);
     static void acceptConnection(uv_stream_t *server, int status);
 public:
     virtual int  send(int cid, const char* data, size_t len);

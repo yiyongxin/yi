@@ -27,4 +27,5 @@ INCLUDE_DIRECTORIES(../include ../src)
 add_library(net SHARED ../src/public/net/server/tcp_server.cpp ../src/public/net/server/tcp_client_obj.cpp)
 # 指定生成目标
 add_executable(yisrv ../src/main.cpp)
+#设置指定目标使用动态库
 target_link_libraries(yisrv ${CMAKE_DL_LIBS})

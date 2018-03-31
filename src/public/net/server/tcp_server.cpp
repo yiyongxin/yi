@@ -19,13 +19,13 @@ inline std::string GetUVError(int errcode)
 tcp_server::tcp_server(uv_loop_t* loop)
     :_newconcb(nullptr), _isinit(false),_loop(loop)
 {
-
+    svr_name = "default server";
 }
 
 tcp_server::~tcp_server()
 {
     close();
-    LOGIFS_INFO("tcp server destructor");
+    LOGIFS_INFO(svr_name.c_str() << ": tcp server destructor");
 }
 
 const char* tcp_server::get_errstr()
@@ -40,14 +40,14 @@ bool tcp_server::init()
     if (!_loop)
     {
         _errstr = "tcp init loop is null";
-        LOGIFS_ERR(_errstr);
+        LOGIFS_ERR(_errstr.c_str());
         return false;
     }
     int errcode = uv_tcp_init(_loop, &_server);
     if (errcode)
     {
         _errstr = GetUVError(errcode);
-        LOGIFS_ERR(_errstr);
+        LOGIFS_ERR(_errstr.c_str());
         return false;
     }
     _isinit = true;
@@ -58,10 +58,10 @@ bool tcp_server::init()
 void tcp_server::close()
 {
     for (auto it = _clienttab.begin(); it!=_clienttab.end(); ++it)
-        uv_close((uv_handle_t*)it->second->_client,AfterClientClose);
+        uv_close((uv_handle_t*)it->second->_client,client_close_cb);
     _clienttab.clear();
     if (_isinit)
-        uv_close((uv_handle_t*) &_server, AfterServerClose);
+        uv_close((uv_handle_t*) &_server, sever_close_cb);
     _isinit = false;
     LOGIFS_INFO("close server");
 }
@@ -73,7 +73,7 @@ bool tcp_server::run(int status)
     if (iret)
     {
         _errstr = GetUVError(iret);
-        LOGIFS_ERR(_errstr);
+        LOGIFS_ERR(_errstr.c_str());
         return false;
     }
     return true;
@@ -85,7 +85,7 @@ bool tcp_server::set_nodelay(bool enable)
     if (iret)
     {
         _errstr = GetUVError(iret);
-        LOGIFS_ERR(_errstr);
+        LOGIFS_ERR(_errstr.c_str());
         return false;
     }
     return true;
@@ -97,7 +97,7 @@ bool tcp_server::set_keep_alive(int enable, unsigned int delay)
     if (iret)
     {
         _errstr = GetUVError(iret);
-        LOGIFS_ERR(_errstr);
+        LOGIFS_ERR(_errstr.c_str());
         return false;
     }
     return true;
@@ -113,14 +113,14 @@ bool tcp_server::bind(const char* ip, int port, bool isipv6)
         if (iret)
         {
             _errstr = GetUVError(iret);
-            LOGIFS_ERR(_errstr);
+            LOGIFS_ERR(_errstr.c_str());
             return false;
         }
         iret = uv_tcp_bind(&_server, (const struct sockaddr*)&bind_addr,0);
         if (iret)
         {
             _errstr = GetUVError(iret);
-            LOGIFS_ERR(_errstr);
+            LOGIFS_ERR(_errstr.c_str());
             return false;
         }
     }
@@ -131,14 +131,14 @@ bool tcp_server::bind(const char* ip, int port, bool isipv6)
         if (iret)
         {
             _errstr = GetUVError(iret);
-            LOGIFS_ERR(_errstr);
+            LOGIFS_ERR(_errstr.c_str());
             return false;
         }
         iret = uv_tcp_bind(&_server, (const struct sockaddr*)&bind_addr,0);
         if (iret)
         {
             _errstr = GetUVError(iret);
-            LOGIFS_ERR(_errstr);
+            LOGIFS_ERR(_errstr.c_str());
             return false;
         }
     }
@@ -152,7 +152,7 @@ bool tcp_server::listen(int backlog)
     if (iret)
     {
         _errstr = GetUVError(iret);
-        LOGIFS_ERR(_errstr);
+        LOGIFS_ERR(_errstr.c_str());
         return false;
     }
     LOGIFS_INFO("server listen");
@@ -181,7 +181,7 @@ int tcp_server::send(int cid, const char* data, size_t len)
     {
         _errstr = "can't find cliendid ";
         _errstr += std::to_string((long long)cid);
-        LOGIFS_ERR(_errstr);
+        LOGIFS_ERR(_errstr.c_str());
         return -1;
     }
     //自己控制data的生命周期直到write结束
@@ -196,7 +196,7 @@ int tcp_server::send(int cid, const char* data, size_t len)
     if (iret)
     {
         _errstr = GetUVError(iret);
-        LOGIFS_ERR(_errstr);
+        LOGIFS_ERR(_errstr.c_str());
         return false;
     }
     return true;
@@ -216,7 +216,7 @@ void tcp_server::acceptConnection(uv_stream_t *server, int status)
     {
         delete cdata;
         tcpsock->_errstr = GetUVError(iret);
-        LOGIFS_ERR(tcpsock->_errstr);
+        LOGIFS_ERR(tcpsock->_errstr.c_str());
         return;
     }
     iret = uv_accept((uv_stream_t*)&tcpsock->_server, (uv_stream_t*) cdata->_client);
@@ -225,7 +225,7 @@ void tcp_server::acceptConnection(uv_stream_t *server, int status)
         tcpsock->_errstr = GetUVError(iret);
         uv_close((uv_handle_t*) cdata->_client, NULL);
         delete cdata;
-        LOGIFS_ERR(tcpsock->_errstr);
+        LOGIFS_ERR(tcpsock->_errstr.c_str());
         return;
     }
     tcpsock->_clienttab.insert(std::make_pair(cid,cdata));//加入到链接队列
@@ -265,15 +265,17 @@ void tcp_server::AfterServerRecv(uv_stream_t *handle, ssize_t nread, const uv_bu
     tcp_client_obj *client = (tcp_client_obj*)handle->data;//服务器的recv带的是tcp_client_obj
     if (nread < 0) {
         tcp_server *server = (tcp_server *)client->_server;
-        if (nread == UV_EOF) {
-            fprintf(stdout,"客户端(%d)连接断开，关闭此客户端\n",client->id);
+        if (nread == UV_EOF) 
+        {
             LOGIFS_WARN("客户端("<<client->id<<")主动断开");
-        } else if (nread == UV_ECONNRESET) {
-            fprintf(stdout,"客户端(%d)异常断开\n",client->id);
+        }
+        else if (nread == UV_ECONNRESET) 
+        {
             LOGIFS_WARN("客户端("<<client->id<<")异常断开");
-        } else {
-            fprintf(stdout,"%s\n",GetUVError(nread));
-            LOGIFS_WARN("客户端("<<client->id<<")异常断开："<<GetUVError(nread));
+        } 
+        else 
+        {
+            LOGIFS_WARN("客户端("<<client->id<<")异常断开："<<GetUVError(nread).c_str());
         }
         server->delete_client(client->id);//连接断开，关闭客户端
         return;
@@ -286,18 +288,16 @@ void tcp_server::AfterServerRecv(uv_stream_t *handle, ssize_t nread, const uv_bu
 
 void tcp_server::AfterSend(uv_write_t *req, int status)
 {
-    if (status < 0) {
-        LOGIFS_ERR("发送数据有误:"<<GetUVError(status));
-        fprintf(stderr, "Write error %s\n", GetUVError(status));
-    }
+    if (status < 0)
+        LOGIFS_ERR("发送数据有误:"<<GetUVError(status).c_str());
 }
 
-void tcp_server::AfterServerClose(uv_handle_t *handle)
+void tcp_server::sever_close_cb(uv_handle_t *handle)
 {
     //服务器,不需要做什么
 }
 
-void tcp_server::AfterClientClose(uv_handle_t *handle)
+void tcp_server::client_close_cb(uv_handle_t *handle)
 {
     tcp_client_obj *cdata = (tcp_client_obj*)handle->data;
     LOGIFS_INFO("client "<<cdata->id<<" had closed.");
@@ -317,14 +317,14 @@ bool tcp_server::delete_client(int cid)
     if (itfind == _clienttab.end()) {
         _errstr = "can't find client ";
         _errstr += std::to_string((long long)cid);
-        LOGIFS_ERR(_errstr);
+        LOGIFS_ERR(_errstr.c_str());
         // uv_mutex_unlock(&mutex_handle_);
         return false;
     }
     if (uv_is_active((uv_handle_t*)itfind->second->_client)) {
         uv_read_stop((uv_stream_t*)itfind->second->_client);
     }
-    uv_close((uv_handle_t*)itfind->second->_client,AfterClientClose);
+    uv_close((uv_handle_t*)itfind->second->_client,client_close_cb);
 
     _clienttab.erase(itfind);
     LOGIFS_INFO("删除客户端"<<cid);
