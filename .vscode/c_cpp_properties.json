@@ -31,12 +31,14 @@
                     "z:/include/x86_64-linux-gnu/5.4.0",
                     "z:/lib/gcc/x86_64-linux-gnu/5.4.0/include",
                     "${workspaceRoot}/include",
-                    "${workspaceRoot}/src/public",            
+                    "${workspaceRoot}/src/public",
                     "${workspaceRoot}"
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
-            }
+            },
+            "cStandard": "c11",
+            "cppStandard": "c++17"
         }
     ],
     "version": 3

@@ -5,7 +5,7 @@ project (yisrv)
 
 add_compile_options(-std=c++11)
 
-add_definitions(_LOG4CPLUS)
+add_definitions(-D _LOG4CPLUS)
 
 # aux_source_directory(. utils_src)     #查找路径下所有源代码
 
@@ -20,9 +20,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_OUT_PAHT})
 # add_custom_command(OUTPUT  ${LOG}  
 #   COMMAND echo "Generating log.txt file..."  )
 
-INCLUDE_DIRECTORIES(../include ../src ../src/public)
+INCLUDE_DIRECTORIES(../include ../src)
 
-add_library(fun SHARED ../src/public/test.cpp)
+# add_library(fun SHARED ../src/public/test.cpp)
 add_library(net SHARED ../src/public/net/server/tcp_server.cpp ../src/public/net/server/tcp_client_obj.cpp)
 # 指定生成目标
 add_executable(yisrv ../src/main.cpp)
