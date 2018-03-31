@@ -9,7 +9,7 @@
 #include "tcp_server.h"
 #include "../../logifs.h"
 
-std::string GetUVError(int errcode)
+inline std::string GetUVError(int errcode)
 {
     std::string err = uv_err_name(errcode);
     err = err + ": " + uv_strerror(errcode);

@@ -5,6 +5,7 @@ project (yisrv)
 
 add_compile_options(-std=c++11)
 
+#预设置宏 _LOG4CPLUS 启动lop4cpuls日志库
 add_definitions(-D _LOG4CPLUS)
 
 # aux_source_directory(. utils_src)     #查找路径下所有源代码
