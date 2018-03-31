@@ -23,7 +23,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_OUT_PAHT})
 
 INCLUDE_DIRECTORIES(../include ../src)
 
-# add_library(fun SHARED ../src/public/test.cpp)
+add_library(fun SHARED ../src/public/test.cpp)
 add_library(net SHARED ../src/public/net/server/tcp_server.cpp ../src/public/net/server/tcp_client_obj.cpp)
 # 指定生成目标
 add_executable(yisrv ../src/main.cpp)
