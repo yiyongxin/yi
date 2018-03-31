@@ -1,14 +1,6 @@
 lib/libfun.so
 lib/libnet.so
-lib/third_party/libprotobuf.a
-lib/third_party/libprotoc.so.15.0.1
-lib/third_party/libprotobuf.a
-lib/third_party/libprotobuf.so
-lib/third_party/libprotobuf.so.15
-lib/third_party/libprotobuf.so.15.0.1
-lib/third_party/libprotoc.a
-lib/third_party/libprotoc.so
-lib/third_party/libprotoc.so.15
+lib/third_party
 cmake/CMakeCache.txt
 cmake/Makefile
 cmake/cmake_install.cmake
