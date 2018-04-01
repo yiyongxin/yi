@@ -16,10 +16,10 @@ class tcp_server
 public:
     typedef void (*newcon_cb)(int cid);
 public:
-    tcp_server(uv_loop_t* loop);
+    tcp_server(uv_loop_t* loop,char* name = "default server");
     virtual ~tcp_server();
 private:
-    std::string svr_name;  //该服务的名字
+    std::string _svr_name;  //该服务的名字
     uv_loop_t *_loop;      //libuv主循环
     uv_tcp_t _server;      //服务器句柄
     bool _isinit;          //是否已初始化

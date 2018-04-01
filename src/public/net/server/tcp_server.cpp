@@ -9,23 +9,23 @@
 #include "tcp_server.h"
 #include "../../logifs.h"
 
-inline std::string GetUVError(int errcode)
+inline std::string libuvErrStr(int errcode)
 {
     std::string err = uv_err_name(errcode);
     err = err + ": " + uv_strerror(errcode);
     return std::move(err);
 }
 
-tcp_server::tcp_server(uv_loop_t* loop)
-    :_newconcb(nullptr), _isinit(false),_loop(loop)
+tcp_server::tcp_server(uv_loop_t* loop, char* name)
+    :_newconcb(nullptr), _isinit(false),_loop(loop),_svr_name(name)
 {
-    svr_name = "default server";
+
 }
 
 tcp_server::~tcp_server()
 {
     close();
-    LOGIFS_INFO(svr_name.c_str() << ": tcp server destructor");
+    LOGIFS_INFO(_svr_name.c_str() << ": tcp server destructor");
 }
 
 const char* tcp_server::get_errstr()
@@ -46,7 +46,7 @@ bool tcp_server::init()
     int errcode = uv_tcp_init(_loop, &_server);
     if (errcode)
     {
-        _errstr = GetUVError(errcode);
+        _errstr = libuvErrStr(errcode);
         LOGIFS_ERR(_errstr.c_str());
         return false;
     }
@@ -72,7 +72,7 @@ bool tcp_server::run(int status)
     int iret = uv_run(_loop,(uv_run_mode)status);
     if (iret)
     {
-        _errstr = GetUVError(iret);
+        _errstr = libuvErrStr(iret);
         LOGIFS_ERR(_errstr.c_str());
         return false;
     }
@@ -84,7 +84,7 @@ bool tcp_server::set_nodelay(bool enable)
     int iret = uv_tcp_nodelay(&_server, enable ? 1 : 0);
     if (iret)
     {
-        _errstr = GetUVError(iret);
+        _errstr = libuvErrStr(iret);
         LOGIFS_ERR(_errstr.c_str());
         return false;
     }
@@ -96,7 +96,7 @@ bool tcp_server::set_keep_alive(int enable, unsigned int delay)
     int iret = uv_tcp_keepalive(&_server, enable , delay);
     if (iret)
     {
-        _errstr = GetUVError(iret);
+        _errstr = libuvErrStr(iret);
         LOGIFS_ERR(_errstr.c_str());
         return false;
     }
@@ -112,14 +112,14 @@ bool tcp_server::bind(const char* ip, int port, bool isipv6)
         int iret = uv_ip6_addr(ip, port, &bind_addr);
         if (iret)
         {
-            _errstr = GetUVError(iret);
+            _errstr = libuvErrStr(iret);
             LOGIFS_ERR(_errstr.c_str());
             return false;
         }
         iret = uv_tcp_bind(&_server, (const struct sockaddr*)&bind_addr,0);
         if (iret)
         {
-            _errstr = GetUVError(iret);
+            _errstr = libuvErrStr(iret);
             LOGIFS_ERR(_errstr.c_str());
             return false;
         }
@@ -130,14 +130,14 @@ bool tcp_server::bind(const char* ip, int port, bool isipv6)
         int iret = uv_ip4_addr(ip, port, &bind_addr);
         if (iret)
         {
-            _errstr = GetUVError(iret);
+            _errstr = libuvErrStr(iret);
             LOGIFS_ERR(_errstr.c_str());
             return false;
         }
         iret = uv_tcp_bind(&_server, (const struct sockaddr*)&bind_addr,0);
         if (iret)
         {
-            _errstr = GetUVError(iret);
+            _errstr = libuvErrStr(iret);
             LOGIFS_ERR(_errstr.c_str());
             return false;
         }
@@ -151,7 +151,7 @@ bool tcp_server::listen(int backlog)
     int iret = uv_listen((uv_stream_t*) &_server, backlog, acceptConnection);
     if (iret)
     {
-        _errstr = GetUVError(iret);
+        _errstr = libuvErrStr(iret);
         LOGIFS_ERR(_errstr.c_str());
         return false;
     }
@@ -195,7 +195,7 @@ int tcp_server::send(int cid, const char* data, size_t len)
     int iret = uv_write(&itfind->second->_writereq, (uv_stream_t*)itfind->second->_client, &buf, 1, AfterSend);
     if (iret)
     {
-        _errstr = GetUVError(iret);
+        _errstr = libuvErrStr(iret);
         LOGIFS_ERR(_errstr.c_str());
         return false;
     }
@@ -215,14 +215,14 @@ void tcp_server::acceptConnection(uv_stream_t *server, int status)
     if (iret)
     {
         delete cdata;
-        tcpsock->_errstr = GetUVError(iret);
+        tcpsock->_errstr = libuvErrStr(iret);
         LOGIFS_ERR(tcpsock->_errstr.c_str());
         return;
     }
     iret = uv_accept((uv_stream_t*)&tcpsock->_server, (uv_stream_t*) cdata->_client);
     if (iret)
     {
-        tcpsock->_errstr = GetUVError(iret);
+        tcpsock->_errstr = libuvErrStr(iret);
         uv_close((uv_handle_t*) cdata->_client, NULL);
         delete cdata;
         LOGIFS_ERR(tcpsock->_errstr.c_str());
@@ -275,7 +275,7 @@ void tcp_server::AfterServerRecv(uv_stream_t *handle, ssize_t nread, const uv_bu
         } 
         else 
         {
-            LOGIFS_WARN("客户端("<<client->id<<")异常断开："<<GetUVError(nread).c_str());
+            LOGIFS_WARN("客户端("<<client->id<<")异常断开："<<libuvErrStr(nread).c_str());
         }
         server->delete_client(client->id);//连接断开，关闭客户端
         return;
@@ -289,7 +289,7 @@ void tcp_server::AfterServerRecv(uv_stream_t *handle, ssize_t nread, const uv_bu
 void tcp_server::AfterSend(uv_write_t *req, int status)
 {
     if (status < 0)
-        LOGIFS_ERR("发送数据有误:"<<GetUVError(status).c_str());
+        LOGIFS_ERR("发送数据有误:"<<libuvErrStr(status).c_str());
 }
 
 void tcp_server::sever_close_cb(uv_handle_t *handle)
