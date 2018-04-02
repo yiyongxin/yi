@@ -27,10 +27,10 @@ private:
     std::unordered_map<int,tcp_client_obj*> _clienttab; //客户端哈希表
     newcon_cb _newconcb;   //新连接回调函数
 public:
-    bool Start(const char *ip, int port);
+    bool start(const char *ip, int port, bool isipv6 = false);
     void close();
 
-    bool set_nodelay(bool enable);
+    bool set_nodelay(bool enable);  //设置是否开启小包合并发送功能
     bool set_keep_alive(int enable, unsigned int delay);    //设置心跳函数
 
     const char* get_errstr();   //获取错误字符串
@@ -42,13 +42,13 @@ private:
     int get_cid();  //获取可用客户端编号
     bool delete_client(int cid);   //删除客户端
 private:
-    static void sever_close_cb(uv_handle_t *handle);
-    static void client_close_cb(uv_handle_t *handle);
+    static void sever_close_cb(uv_handle_t *handle);    //关闭服务端后回调函数
+    static void client_close_cb(uv_handle_t *handle);   //关闭客户端后回调函数
+    static void send_cb(uv_write_t *req, int status);   //发送后回调函数
+    static void accept(uv_stream_t *server, int status);    //接受连接
     
     static void AfterServerRecv(uv_stream_t *client, ssize_t nread, const uv_buf_t* buf);
-    static void AfterSend(uv_write_t *req, int status);
     static void onAllocBuffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf);
-    static void acceptConnection(uv_stream_t *server, int status);
 public:
     virtual int  send(int cid, const char* data, size_t len);
     virtual void setnewcon_cb(newcon_cb cb);  //服务器-新链接回调函数
