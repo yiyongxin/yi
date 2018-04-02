@@ -203,6 +203,12 @@ int tcp_server::send(int cid, const char* data, size_t len)
     return true;
 }
 
+void tcp_server::send_cb(uv_write_t *req, int status)
+{
+    if (status < 0)
+        LOGIFS_ERR("发送数据有误:"<<libuv_err_str(status));
+}
+
 void tcp_server::accept(uv_stream_t *server, int status)
 {
     if (!server->data)
@@ -284,12 +290,6 @@ void tcp_server::AfterServerRecv(uv_stream_t *handle, ssize_t nread, const uv_bu
     } else if (client->_recvcb) {
         client->_recvcb(client->id,buf->base,nread);
     }
-}
-
-void tcp_server::send_cb(uv_write_t *req, int status)
-{
-    if (status < 0)
-        LOGIFS_ERR("发送数据有误:"<<libuv_err_str(status));
 }
 
 void tcp_server::sever_close_cb(uv_handle_t *handle)

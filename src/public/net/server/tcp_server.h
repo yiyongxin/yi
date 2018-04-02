@@ -11,6 +11,8 @@
 #include "libuv/uv.h"
 #include "tcp_client_obj.h"
 
+#define WRITE_POOL_GRAIN_SIZE 1024
+
 class tcp_server
 {
 public:
@@ -41,6 +43,9 @@ private:
     bool listen(int backlog = 1024);    //开始监听
     int get_cid();  //获取可用客户端编号
     bool delete_client(int cid);   //删除客户端
+private:
+    
+
 private:
     static void sever_close_cb(uv_handle_t *handle);    //关闭服务端后回调函数
     static void client_close_cb(uv_handle_t *handle);   //关闭客户端后回调函数
