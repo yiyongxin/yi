@@ -13,7 +13,7 @@
 class gspool
 {
 public:
-    gspool(int size = 128);
+    gspool(int size = 32);
     ~gspool();
 public:
     void* malloc(int size);
