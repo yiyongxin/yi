@@ -8,19 +8,22 @@
 #define GRAIN_SIZE_POOL_H_
 
 #include <boost/pool/pool.hpp>
-#include <vector>
+#include <unordered_map>
+
+#define GSPOOL_UNIT_SIZE 32
 
 class gspool
 {
 public:
-    gspool(int size = 32);
+    gspool(unsigned int size = GSPOOL_UNIT_SIZE);
     ~gspool();
 public:
-    void* malloc(int size);
-    void free(void* data, int size);
+    void* malloc(unsigned int size);
+    bool free(void* data, unsigned int size);
 private:
-    int _grain_size;
-    std::vector<void*> _write_pool_array;
+    void* empty;
+    unsigned int _grain_size;
+    std::unordered_map<unsigned int,boost::pool<>*> _pool_map;
 };
 
 #endif //GRAIN_SIZE_POOL_H_

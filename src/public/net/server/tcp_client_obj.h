@@ -26,8 +26,6 @@ public:
     tcp_server* _server;   //服务器句柄(保存是因为某些回调函数需要到)
     
     uv_buf_t _readbuf;     //接受数据的buf
-    uv_buf_t _writebuf;    //写数据的buf
-    uv_write_t _writereq;
     srecv_cb _recvcb;      //接收数据回调给用户的函数
 };
 

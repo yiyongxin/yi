@@ -21,7 +21,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_OUT_PAHT})
 # add_custom_command(OUTPUT  ${LOG}  
 #   COMMAND echo "Generating log.txt file..."  )
 
-INCLUDE_DIRECTORIES(../include ../src)
+INCLUDE_DIRECTORIES(../include ../src ../../../include)
 
 add_library(fun SHARED ../src/public/test.cpp)
 add_library(net SHARED ../src/public/net/server/tcp_server.cpp ../src/public/net/server/tcp_client_obj.cpp)

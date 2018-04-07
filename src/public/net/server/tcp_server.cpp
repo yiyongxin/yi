@@ -16,6 +16,9 @@ inline const char* libuv_err_str(int errcode)
     return err.c_str();
 }
 
+boost::pool<> tcp_server::reqpool(sizeof(uv_write_t));
+gspool tcp_server::_writ_buf_pool;
+
 tcp_server::tcp_server(uv_loop_t* loop, char* name)
     :_newconcb(nullptr), _isinit(false),_loop(loop),_svr_name(name)
 {
@@ -185,15 +188,8 @@ int tcp_server::send(int cid, const char* data, size_t len)
         return -1;
     }
     tcp_client_obj* ttco = itfind->second;
-    //自己控制data的生命周期直到write结束
-    if (ttco->_writebuf.len < len)
-    {
-        ttco->_writebuf.base = (char*)realloc(ttco->_writebuf.base,len);
-        ttco->_writebuf.len = len;
-    }
-    memcpy(ttco->_writebuf.base,data,len);
-    uv_buf_t buf = uv_buf_init((char*)ttco->_writebuf.base,len);
-    int iret = uv_write(&ttco->_writereq, (uv_stream_t*)ttco->_client, &buf, 1, send_cb);
+    uv_buf_t buf = uv_buf_init((char*)data,len);
+    int iret = uv_write((uv_write_t *)reqpool.malloc(), (uv_stream_t*)ttco->_client, &buf, 1, send_cb);
     if (iret)
     {
         _errstr = libuv_err_str(iret);
@@ -207,6 +203,9 @@ void tcp_server::send_cb(uv_write_t *req, int status)
 {
     if (status < 0)
         LOGIFS_ERR("发送数据有误:"<<libuv_err_str(status));
+    uv_buf_t *buf = req->bufs;
+    _writ_buf_pool.free(buf->base,buf->len);
+    reqpool.free(req);
 }
 
 void tcp_server::accept(uv_stream_t *server, int status)

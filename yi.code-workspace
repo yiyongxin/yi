@@ -55,7 +55,16 @@
 			"cstdarg": "cpp",
 			"cstddef": "cpp",
 			"fstream": "cpp",
-			"vector": "cpp"
+			"vector": "cpp",
+			"*.ipp": "cpp",
+			"string_view": "cpp",
+			"valarray": "cpp",
+			"csignal": "cpp",
+			"cstring": "cpp",
+			"strstream": "cpp",
+			"codecvt": "cpp",
+			"complex": "cpp",
+			"iomanip": "cpp"
 		},
 	}
 }
