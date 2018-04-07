@@ -177,7 +177,7 @@ bool tcp_server::start(const char *ip, int port, bool isipv6)
     return true;
 }
 
-int tcp_server::send(int cid, const char* data, size_t len)
+bool tcp_server::send(unsigned int cid, const char* data, size_t len)
 {
     auto itfind = _clienttab.find(cid);
     if (itfind == _clienttab.end())
@@ -185,7 +185,7 @@ int tcp_server::send(int cid, const char* data, size_t len)
         _errstr = "can't find cliendid ";
         _errstr += std::to_string((long long)cid);
         LOGIFS_ERR(_errstr.c_str());
-        return -1;
+        return false;
     }
     tcp_client_obj* ttco = itfind->second;
     uv_buf_t buf = uv_buf_init((char*)data,len);
@@ -208,40 +208,46 @@ void tcp_server::send_cb(uv_write_t *req, int status)
     reqpool.free(req);
 }
 
-void tcp_server::accept(uv_stream_t *server, int status)
+void tcp_server::accept(uv_stream_t *handle, int status)
 {
-    if (!server->data)
+    if (!handle->data)
         return;
-    tcp_server *tcpsock = (tcp_server *)server->data;
-    int cid = tcpsock->get_cid();
+    tcp_server *server = (tcp_server *)handle->data;
+    unsigned int cid = server->get_cid();
     tcp_client_obj* cdata = new tcp_client_obj(cid);//uv_close回调函数中释放
-    cdata->_server = tcpsock;//保存服务器的信息
-    int iret = uv_tcp_init(tcpsock->_loop, cdata->_client);//析构函数释放
+    cdata->_server = server;//保存服务器的信息
+    int iret = uv_tcp_init(server->_loop, cdata->_client);//析构函数释放
     if (iret)
     {
         delete cdata;
-        tcpsock->_errstr = libuv_err_str(iret);
-        LOGIFS_ERR(tcpsock->_errstr.c_str());
+        server->_errstr = libuv_err_str(iret);
+        LOGIFS_ERR(server->_errstr.c_str());
         return;
     }
-    iret = uv_accept((uv_stream_t*)&tcpsock->_server, (uv_stream_t*) cdata->_client);
+    iret = uv_accept((uv_stream_t*)&server->_server, (uv_stream_t*) cdata->_client);
     if (iret)
     {
-        tcpsock->_errstr = libuv_err_str(iret);
+        server->_errstr = libuv_err_str(iret);
         uv_close((uv_handle_t*) cdata->_client, NULL);
         delete cdata;
-        LOGIFS_ERR(tcpsock->_errstr.c_str());
+        LOGIFS_ERR(server->_errstr.c_str());
         return;
     }
-    tcpsock->_clienttab.insert(std::make_pair(cid,cdata));//加入到链接队列
-    if (tcpsock->_newconcb)
-        tcpsock->_newconcb(cid);
+    server->_clienttab.insert(std::make_pair(cid,cdata));//加入到链接队列
+    if (server->_newconcb)
+        server->_newconcb(cid);
     LOGIFS_INFO("new client("<<cdata->_client<<") id="<< cid);
     iret = uv_read_start((uv_stream_t*)cdata->_client, onAllocBuffer, AfterServerRecv);//服务器开始接收客户端的数据
     return;
 }
 
-void tcp_server::setrecvcb(int cid,tcp_client_obj::srecv_cb cb)
+unsigned int tcp_server::get_cid()
+{
+    static int s_id = 0;
+    return ++s_id;
+}
+
+void tcp_server::setrecvcb(unsigned int cid,tcp_client_obj::srecv_cb cb)
 {
     auto itfind = _clienttab.find(cid);
     if (itfind != _clienttab.end())
@@ -303,13 +309,7 @@ void tcp_server::client_close_cb(uv_handle_t *handle)
     delete cdata;
 }
 
-int tcp_server::get_cid()
-{
-    static int s_id = 0;
-    return ++s_id;
-}
-
-bool tcp_server::delete_client(int cid)
+bool tcp_server::delete_client(unsigned int cid)
 {
     // uv_mutex_lock(&mutex_handle_);
     auto itfind = _clienttab.find(cid);

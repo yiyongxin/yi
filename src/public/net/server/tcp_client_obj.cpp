@@ -7,7 +7,7 @@
 #include "tcp_client_obj.h"
 #include "stdlib.h"
 
-tcp_client_obj::tcp_client_obj(int id)
+tcp_client_obj::tcp_client_obj(unsigned int id)
     :id(id),_recvcb(nullptr)
 {
     _client = (uv_tcp_t*)malloc(sizeof(*_client));
