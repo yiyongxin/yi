@@ -8,6 +8,7 @@
 #include <string.h>
 #include "tcp_server.h"
 #include "../../logifs.h"
+#include <iostream>
 
 inline const char* libuv_err_str(int errcode)
 {
@@ -67,6 +68,18 @@ void tcp_server::close()
         uv_close((uv_handle_t*) &_server, sever_close_cb);
     _isinit = false;
     LOGIFS_INFO("close server");
+}
+
+void tcp_server::sever_close_cb(uv_handle_t *handle)
+{
+
+}
+
+void tcp_server::client_close_cb(uv_handle_t *handle)
+{
+    tcp_client_obj *cdata = (tcp_client_obj*)handle->data;
+    LOGIFS_INFO("client "<<cdata->id<<" had closed.");
+    delete cdata;
 }
 
 // bool tcp_server::run(int status)
@@ -135,6 +148,7 @@ bool tcp_server::bind(const char* ip, int port, bool isipv6)
         {
             _errstr = libuv_err_str(iret);
             LOGIFS_ERR(_errstr.c_str());
+            std::cout << _errstr.c_str();
             return false;
         }
         iret = uv_tcp_bind(&_server, (const struct sockaddr*)&bind_addr,0);
@@ -171,8 +185,6 @@ bool tcp_server::start(const char *ip, int port, bool isipv6)
         return false;
     if (!listen(SOMAXCONN))
         return false;
-    // if (!run())
-    //     return false;
     LOGIFS_INFO("start listen "<<ip<<": "<<port);
     return true;
 }
@@ -210,13 +222,13 @@ void tcp_server::send_cb(uv_write_t *req, int status)
 
 void tcp_server::accept(uv_stream_t *handle, int status)
 {
-    if (!handle->data)
+    if (handle->data != NULL)
         return;
     tcp_server *server = (tcp_server *)handle->data;
     unsigned int cid = server->get_cid();
-    tcp_client_obj* cdata = new tcp_client_obj(cid);//uv_close回调函数中释放
-    cdata->_server = server;//保存服务器的信息
-    int iret = uv_tcp_init(server->_loop, cdata->_client);//析构函数释放
+    tcp_client_obj* cdata = new tcp_client_obj(cid);
+    cdata->_server = server;    //保存服务器的信息
+    int iret = uv_tcp_init(server->_loop, cdata->_client);
     if (iret)
     {
         delete cdata;
@@ -233,11 +245,11 @@ void tcp_server::accept(uv_stream_t *handle, int status)
         LOGIFS_ERR(server->_errstr.c_str());
         return;
     }
-    server->_clienttab.insert(std::make_pair(cid,cdata));//加入到链接队列
-    if (server->_newconcb)
+    server->_clienttab.insert(std::make_pair(cid,cdata));   //加入到链接队列
+    if (server->_newconcb != NULL)
         server->_newconcb(cid);
     LOGIFS_INFO("new client("<<cdata->_client<<") id="<< cid);
-    iret = uv_read_start((uv_stream_t*)cdata->_client, onAllocBuffer, AfterServerRecv);//服务器开始接收客户端的数据
+    iret = uv_read_start((uv_stream_t*)cdata->_client, read_alloc_cb, read_cb); //服务器开始接收客户端的数据
     return;
 }
 
@@ -259,21 +271,21 @@ void tcp_server::setnewcon_cb(newcon_cb cb)
     _newconcb = cb;
 }
 
-void tcp_server::onAllocBuffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf)
+void tcp_server::read_alloc_cb(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf)
 {
-    if (!handle->data) {
+    if (handle->data != NULL) {
         return;
     }
     tcp_client_obj *client = (tcp_client_obj*)handle->data;
     *buf = client->_readbuf;
 }
 
-void tcp_server::AfterServerRecv(uv_stream_t *handle, ssize_t nread, const uv_buf_t* buf)
+void tcp_server::read_cb(uv_stream_t *handle, ssize_t nread, const uv_buf_t* buf)
 {
-    if (!handle->data) {
+    if (handle->data != NULL) {
         return;
     }
-    tcp_client_obj *client = (tcp_client_obj*)handle->data;//服务器的recv带的是tcp_client_obj
+    tcp_client_obj *client = (tcp_client_obj*)handle->data; //服务器的recv带的是tcp_client_obj
     if (nread < 0) {
         tcp_server *server = (tcp_server *)client->_server;
         if (nread == UV_EOF) 
@@ -295,18 +307,6 @@ void tcp_server::AfterServerRecv(uv_stream_t *handle, ssize_t nread, const uv_bu
     } else if (client->_recvcb) {
         client->_recvcb(client->id,buf->base,nread);
     }
-}
-
-void tcp_server::sever_close_cb(uv_handle_t *handle)
-{
-    //服务器,不需要做什么
-}
-
-void tcp_server::client_close_cb(uv_handle_t *handle)
-{
-    tcp_client_obj *cdata = (tcp_client_obj*)handle->data;
-    LOGIFS_INFO("client "<<cdata->id<<" had closed.");
-    delete cdata;
 }
 
 bool tcp_server::delete_client(unsigned int cid)

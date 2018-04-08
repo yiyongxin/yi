@@ -21,7 +21,7 @@ public:
     typedef void (*newcon_cb)(int cid);
 public:
     tcp_server(uv_loop_t* loop,char* name = "default server");
-    virtual ~tcp_server();
+    ~tcp_server();
 private:
     std::string _svr_name;  //该服务的名字
     uv_loop_t *_loop;      //libuv主循环
@@ -53,13 +53,12 @@ private:
     static void client_close_cb(uv_handle_t *handle);   //关闭客户端后回调函数
     static void send_cb(uv_write_t *req, int status);   //发送后回调函数
     static void accept(uv_stream_t *handle, int status);    //接受连接
-    
-    static void AfterServerRecv(uv_stream_t *client, ssize_t nread, const uv_buf_t* buf);
-    static void onAllocBuffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf);
+    static void read_alloc_cb(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf);
+    static void read_cb(uv_stream_t *client, ssize_t nread, const uv_buf_t* buf);
 public:
-    virtual bool  send(unsigned int cid, const char* data, size_t len);
-    virtual void setnewcon_cb(newcon_cb cb);  //服务器-新链接回调函数
-    virtual void setrecvcb(unsigned int cid,tcp_client_obj::srecv_cb cb);//设置接收回调函数，每个客户端各有一个
+    bool send(unsigned int cid, const char* data, size_t len);
+    void setnewcon_cb(newcon_cb cb);  //服务器-新链接回调函数
+    void setrecvcb(unsigned int cid,tcp_client_obj::srecv_cb cb);//设置接收回调函数，每个客户端各有一个
 };
 
 #endif //TCP_SERVER_H_

@@ -6,3 +6,5 @@ cmake/CMakeCache.txt
 cmake/Makefile
 cmake/cmake_install.cmake
 cmake/CMakeFiles
+src/dll_test.cpp
+build/Debug/yisrv
