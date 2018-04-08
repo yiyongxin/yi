@@ -4,11 +4,11 @@
 * date:     2018-03-12
 ****************************************/
 
-#include "stdlib.h"
+#include <stdlib.h>  
+#include <stdio.h>
 #include <string.h>
 #include "tcp_server.h"
 #include "../../logifs.h"
-#include <iostream>
 
 inline const char* libuv_err_str(int errcode)
 {
@@ -148,7 +148,6 @@ bool tcp_server::bind(const char* ip, int port, bool isipv6)
         {
             _errstr = libuv_err_str(iret);
             LOGIFS_ERR(_errstr.c_str());
-            std::cout << _errstr.c_str();
             return false;
         }
         iret = uv_tcp_bind(&_server, (const struct sockaddr*)&bind_addr,0);
@@ -222,7 +221,8 @@ void tcp_server::send_cb(uv_write_t *req, int status)
 
 void tcp_server::accept(uv_stream_t *handle, int status)
 {
-    if (handle->data != NULL)
+    printf("accept\n"); 
+    if (handle->data == NULL)
         return;
     tcp_server *server = (tcp_server *)handle->data;
     unsigned int cid = server->get_cid();
@@ -273,7 +273,8 @@ void tcp_server::setnewcon_cb(newcon_cb cb)
 
 void tcp_server::read_alloc_cb(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf)
 {
-    if (handle->data != NULL) {
+    printf("read_alloc_cb size:%d\n",suggested_size); 
+    if (handle->data == NULL) {
         return;
     }
     tcp_client_obj *client = (tcp_client_obj*)handle->data;
@@ -282,10 +283,11 @@ void tcp_server::read_alloc_cb(uv_handle_t *handle, size_t suggested_size, uv_bu
 
 void tcp_server::read_cb(uv_stream_t *handle, ssize_t nread, const uv_buf_t* buf)
 {
-    if (handle->data != NULL) {
+    if (handle->data == NULL) {
         return;
     }
     tcp_client_obj *client = (tcp_client_obj*)handle->data; //服务器的recv带的是tcp_client_obj
+    printf("read_cb:%s %lld\n",buf->base,buf->base); 
     if (nread < 0) {
         tcp_server *server = (tcp_server *)client->_server;
         if (nread == UV_EOF) 

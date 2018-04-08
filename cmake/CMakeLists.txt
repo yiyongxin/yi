@@ -36,5 +36,5 @@ add_executable(yisrv
             ../src/public/grainSizePool.cpp)
 #设置指定目标使用动态库
 target_link_libraries(yisrv ${CMAKE_DL_LIBS})
-# target_link_libraries(yisrv log4cplus.so)
+# target_link_libraries(yisrv log4cplus)
 target_link_libraries(yisrv uv)
