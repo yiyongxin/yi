@@ -18,7 +18,7 @@ inline const char* libuv_err_str(int errcode)
 }
 
 boost::pool<> tcp_server::reqpool(sizeof(uv_write_t));
-gspool tcp_server::_writ_buf_pool;
+// gspool tcp_server::_writ_buf_pool;
 
 tcp_server::tcp_server(uv_loop_t* loop, char* name)
     :_newconcb(nullptr), _isinit(false),_loop(loop),_svr_name(name)
@@ -215,17 +215,17 @@ void tcp_server::send_cb(uv_write_t *req, int status)
     if (status < 0)
         LOGIFS_ERR("发送数据有误:"<<libuv_err_str(status));
     uv_buf_t *buf = req->bufs;
-    _writ_buf_pool.free(buf->base,buf->len);
+    // _writ_buf_pool.free(buf->base,buf->len);
     reqpool.free(req);
 }
 
 void tcp_server::accept(uv_stream_t *handle, int status)
 {
-    printf("accept\n"); 
     if (handle->data == NULL)
         return;
     tcp_server *server = (tcp_server *)handle->data;
     unsigned int cid = server->get_cid();
+    printf("accept cid:%d\n",cid); 
     tcp_client_obj* cdata = new tcp_client_obj(cid);
     cdata->_server = server;    //保存服务器的信息
     int iret = uv_tcp_init(server->_loop, cdata->_client);
@@ -273,11 +273,11 @@ void tcp_server::setnewcon_cb(newcon_cb cb)
 
 void tcp_server::read_alloc_cb(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf)
 {
-    printf("read_alloc_cb size:%d\n",suggested_size); 
     if (handle->data == NULL) {
         return;
     }
     tcp_client_obj *client = (tcp_client_obj*)handle->data;
+    printf("alloc_cb cid:%d\n",buf->base,client->id); 
     *buf = client->_readbuf;
 }
 
@@ -287,7 +287,7 @@ void tcp_server::read_cb(uv_stream_t *handle, ssize_t nread, const uv_buf_t* buf
         return;
     }
     tcp_client_obj *client = (tcp_client_obj*)handle->data; //服务器的recv带的是tcp_client_obj
-    printf("read_cb:%s %lld\n",buf->base,buf->base); 
+    printf("read_cb:%s %x cid:%d\n",buf->base,buf->base,client->id); 
     if (nread < 0) {
         tcp_server *server = (tcp_server *)client->_server;
         if (nread == UV_EOF) 

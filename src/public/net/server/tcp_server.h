@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include "libuv/uv.h"
 #include "tcp_client_obj.h"
-#include "../../grainSizePool.h"
+// #include "../../grainSizePool.h"
 
 #define WRITE_POOL_GRAIN_SIZE 1024
 
@@ -47,7 +47,7 @@ private:
     bool delete_client(unsigned int cid);   //删除客户端
 private:
     static boost::pool<> reqpool;
-    static gspool _writ_buf_pool;
+    // static gspool _writ_buf_pool;
 private:
     static void sever_close_cb(uv_handle_t *handle);    //关闭服务端后回调函数
     static void client_close_cb(uv_handle_t *handle);   //关闭客户端后回调函数

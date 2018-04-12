@@ -1,10 +1,8 @@
 bilid
-lib/libfun.so
-lib/libnet.so
-lib/third_party
+lib
 cmake/CMakeCache.txt
 cmake/Makefile
 cmake/cmake_install.cmake
 cmake/CMakeFiles
-src/dll_test.cpp
 build/Debug/yisrv
+src/test_src

@@ -9,12 +9,10 @@
 #include <stdlib.h>  
 #include <stdio.h>
 
+#include "test_src/test.h"
+
 int main(int argc, char *argv[])
 {
-    printf("test libuv net\n"); 
-    uv_loop_t* loop = uv_default_loop();
-    tcp_server* tcp = new tcp_server(loop,"test server");
-    tcp->start("0.0.0.0", 8890);
-    uv_run(loop, UV_RUN_DEFAULT);
+    test_src();
     return 1;
 }
