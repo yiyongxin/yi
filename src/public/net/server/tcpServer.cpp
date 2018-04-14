@@ -31,7 +31,7 @@ tcpServer::~tcpServer()
     LOGIFS_INFO(_svr_name.c_str() << ": tcp server destructor");
 }
 
-const char* tcpServer::get_errstr()
+const char* tcpServer::getErrStr()
 {
     return _errstr.c_str();
 }
@@ -61,20 +61,20 @@ bool tcpServer::init()
 void tcpServer::close()
 {
     for (auto it = _clienttab.begin(); it!=_clienttab.end(); ++it)
-        uv_close((uv_handle_t*)it->second->_client,client_close_cb);
+        uv_close((uv_handle_t*)it->second->_client,clientClose_cb);
     _clienttab.clear();
     if (_isinit)
-        uv_close((uv_handle_t*) &_server, sever_close_cb);
+        uv_close((uv_handle_t*) &_server, severClose_cb);
     _isinit = false;
     LOGIFS_INFO("close server");
 }
 
-void tcpServer::sever_close_cb(uv_handle_t *handle)
+void tcpServer::severClose_cb(uv_handle_t *handle)
 {
 
 }
 
-void tcpServer::client_close_cb(uv_handle_t *handle)
+void tcpServer::clientClose_cb(uv_handle_t *handle)
 {
     tcpClientObj *cdata = (tcpClientObj*)handle->data;
     LOGIFS_INFO("client "<<cdata->id<<" had closed.");
@@ -94,7 +94,7 @@ void tcpServer::client_close_cb(uv_handle_t *handle)
 //     return true;
 // }
 
-bool tcpServer::set_nodelay(bool enable)
+bool tcpServer::setnodelay(bool enable)
 {
     int iret = uv_tcp_nodelay(&_server, enable ? 1 : 0);
     if (iret)
@@ -106,7 +106,7 @@ bool tcpServer::set_nodelay(bool enable)
     return true;
 }
 
-bool tcpServer::set_keep_alive(int enable, unsigned int delay)
+bool tcpServer::setKeepAlive(int enable, unsigned int delay)
 {
     int iret = uv_tcp_keepalive(&_server, enable , delay);
     if (iret)
@@ -222,7 +222,7 @@ void tcpServer::accept(uv_stream_t *handle, int status)
     if (handle->data == NULL)
         return;
     tcpServer *server = (tcpServer *)handle->data;
-    unsigned int cid = server->get_cid();
+    unsigned int cid = server->getCid();
     printf("accept cid:%d\n",cid); 
     tcpClientObj* cdata = new tcpClientObj(cid);
     cdata->_server = server;    //保存服务器的信息
@@ -247,17 +247,17 @@ void tcpServer::accept(uv_stream_t *handle, int status)
     if (server->_newconcb != NULL)
         server->_newconcb(cid);
     LOGIFS_INFO("new client("<<cdata->_client<<") id="<< cid);
-    iret = uv_read_start((uv_stream_t*)cdata->_client, read_alloc_cb, read_cb); //服务器开始接收客户端的数据
+    iret = uv_read_start((uv_stream_t*)cdata->_client, readAlloc_cb, read_cb); //服务器开始接收客户端的数据
     return;
 }
 
-unsigned int tcpServer::get_cid()
+unsigned int tcpServer::getCid()
 {
     static int s_id = 0;
     return ++s_id;
 }
 
-void tcpServer::setrecvcb(unsigned int cid,tcpClientObj::srecv_cb cb)
+void tcpServer::setrecv_cb(unsigned int cid,tcpClientObj::srecv_cb cb)
 {
     auto itfind = _clienttab.find(cid);
     if (itfind != _clienttab.end())
@@ -269,7 +269,7 @@ void tcpServer::setnewcon_cb(newcon_cb cb)
     _newconcb = cb;
 }
 
-void tcpServer::read_alloc_cb(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf)
+void tcpServer::readAlloc_cb(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf)
 {
     if (handle->data == NULL) {
         return;
@@ -303,7 +303,7 @@ void tcpServer::read_cb(uv_stream_t *handle, ssize_t nread, const uv_buf_t* buf)
         {
             LOGIFS_WARN("客户端("<<client->id<<")异常断开："<<libuv_err_str(nread));
         }
-        server->delete_client(client->id);//连接断开，关闭客户端
+        server->deleteClient(client->id);//连接断开，关闭客户端
         return;
     } else if (0 == nread)  {/* Everything OK, but nothing read. */
 
@@ -312,7 +312,7 @@ void tcpServer::read_cb(uv_stream_t *handle, ssize_t nread, const uv_buf_t* buf)
     }
 }
 
-bool tcpServer::delete_client(unsigned int cid)
+bool tcpServer::deleteClient(unsigned int cid)
 {
     // uv_mutex_lock(&mutex_handle_);
     auto itfind = _clienttab.find(cid);
@@ -326,7 +326,7 @@ bool tcpServer::delete_client(unsigned int cid)
     if (uv_is_active((uv_handle_t*)itfind->second->_client)) {
         uv_read_stop((uv_stream_t*)itfind->second->_client);
     }
-    uv_close((uv_handle_t*)itfind->second->_client,client_close_cb);
+    uv_close((uv_handle_t*)itfind->second->_client,clientClose_cb);
 
     _clienttab.erase(itfind);
     LOGIFS_INFO("删除客户端"<<cid);
