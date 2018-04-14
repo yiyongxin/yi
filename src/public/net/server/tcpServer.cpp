@@ -7,7 +7,7 @@
 #include <stdlib.h>  
 #include <stdio.h>
 #include <string.h>
-#include "tcp_server.h"
+#include "tcpServer.h"
 #include "../../logifs.h"
 
 inline const char* libuv_err_str(int errcode)
@@ -17,27 +17,26 @@ inline const char* libuv_err_str(int errcode)
     return err.c_str();
 }
 
-boost::pool<> tcp_server::reqpool(sizeof(uv_write_t));
-// gspool tcp_server::_writ_buf_pool;
+boost::pool<> tcpServer::_reqpool(sizeof(uv_write_t));
 
-tcp_server::tcp_server(uv_loop_t* loop, char* name)
+tcpServer::tcpServer(uv_loop_t* loop, char* name)
     :_newconcb(nullptr), _isinit(false),_loop(loop),_svr_name(name)
 {
 
 }
 
-tcp_server::~tcp_server()
+tcpServer::~tcpServer()
 {
     close();
     LOGIFS_INFO(_svr_name.c_str() << ": tcp server destructor");
 }
 
-const char* tcp_server::get_errstr()
+const char* tcpServer::get_errstr()
 {
     return _errstr.c_str();
 }
 
-bool tcp_server::init()
+bool tcpServer::init()
 {
     if (_isinit)
         return true;
@@ -59,7 +58,7 @@ bool tcp_server::init()
     return true;
 }
 
-void tcp_server::close()
+void tcpServer::close()
 {
     for (auto it = _clienttab.begin(); it!=_clienttab.end(); ++it)
         uv_close((uv_handle_t*)it->second->_client,client_close_cb);
@@ -70,19 +69,19 @@ void tcp_server::close()
     LOGIFS_INFO("close server");
 }
 
-void tcp_server::sever_close_cb(uv_handle_t *handle)
+void tcpServer::sever_close_cb(uv_handle_t *handle)
 {
 
 }
 
-void tcp_server::client_close_cb(uv_handle_t *handle)
+void tcpServer::client_close_cb(uv_handle_t *handle)
 {
     tcp_client_obj *cdata = (tcp_client_obj*)handle->data;
     LOGIFS_INFO("client "<<cdata->id<<" had closed.");
     delete cdata;
 }
 
-// bool tcp_server::run(int status)
+// bool tcpServer::run(int status)
 // {
 //     LOGIFS_INFO("server runing.");
 //     int iret = uv_run(_loop,(uv_run_mode)status);
@@ -95,7 +94,7 @@ void tcp_server::client_close_cb(uv_handle_t *handle)
 //     return true;
 // }
 
-bool tcp_server::set_nodelay(bool enable)
+bool tcpServer::set_nodelay(bool enable)
 {
     int iret = uv_tcp_nodelay(&_server, enable ? 1 : 0);
     if (iret)
@@ -107,7 +106,7 @@ bool tcp_server::set_nodelay(bool enable)
     return true;
 }
 
-bool tcp_server::set_keep_alive(int enable, unsigned int delay)
+bool tcpServer::set_keep_alive(int enable, unsigned int delay)
 {
     int iret = uv_tcp_keepalive(&_server, enable , delay);
     if (iret)
@@ -120,7 +119,7 @@ bool tcp_server::set_keep_alive(int enable, unsigned int delay)
 }
 
 
-bool tcp_server::bind(const char* ip, int port, bool isipv6)
+bool tcpServer::bind(const char* ip, int port, bool isipv6)
 {
     if(isipv6)
     {
@@ -162,7 +161,7 @@ bool tcp_server::bind(const char* ip, int port, bool isipv6)
     return true;
 }
 
-bool tcp_server::listen(int backlog)
+bool tcpServer::listen(int backlog)
 {
     int iret = uv_listen((uv_stream_t*) &_server, backlog, accept);
     if (iret)
@@ -175,7 +174,7 @@ bool tcp_server::listen(int backlog)
     return true;
 }
 
-bool tcp_server::start(const char *ip, int port, bool isipv6)
+bool tcpServer::start(const char *ip, int port, bool isipv6)
 {
     close();
     if (!init())
@@ -188,7 +187,7 @@ bool tcp_server::start(const char *ip, int port, bool isipv6)
     return true;
 }
 
-bool tcp_server::send(unsigned int cid, const char* data, size_t len)
+bool tcpServer::send(unsigned int cid, const char* data, size_t len)
 {
     auto itfind = _clienttab.find(cid);
     if (itfind == _clienttab.end())
@@ -200,7 +199,7 @@ bool tcp_server::send(unsigned int cid, const char* data, size_t len)
     }
     tcp_client_obj* ttco = itfind->second;
     uv_buf_t buf = uv_buf_init((char*)data,len);
-    int iret = uv_write((uv_write_t *)reqpool.malloc(), (uv_stream_t*)ttco->_client, &buf, 1, send_cb);
+    int iret = uv_write((uv_write_t *)_reqpool.malloc(), (uv_stream_t*)ttco->_client, &buf, 1, send_cb);
     if (iret)
     {
         _errstr = libuv_err_str(iret);
@@ -210,20 +209,19 @@ bool tcp_server::send(unsigned int cid, const char* data, size_t len)
     return true;
 }
 
-void tcp_server::send_cb(uv_write_t *req, int status)
+void tcpServer::send_cb(uv_write_t *req, int status)
 {
     if (status < 0)
         LOGIFS_ERR("发送数据有误:"<<libuv_err_str(status));
     uv_buf_t *buf = req->bufs;
-    // _writ_buf_pool.free(buf->base,buf->len);
-    reqpool.free(req);
+    _reqpool.free(req);
 }
 
-void tcp_server::accept(uv_stream_t *handle, int status)
+void tcpServer::accept(uv_stream_t *handle, int status)
 {
     if (handle->data == NULL)
         return;
-    tcp_server *server = (tcp_server *)handle->data;
+    tcpServer *server = (tcpServer *)handle->data;
     unsigned int cid = server->get_cid();
     printf("accept cid:%d\n",cid); 
     tcp_client_obj* cdata = new tcp_client_obj(cid);
@@ -253,25 +251,25 @@ void tcp_server::accept(uv_stream_t *handle, int status)
     return;
 }
 
-unsigned int tcp_server::get_cid()
+unsigned int tcpServer::get_cid()
 {
     static int s_id = 0;
     return ++s_id;
 }
 
-void tcp_server::setrecvcb(unsigned int cid,tcp_client_obj::srecv_cb cb)
+void tcpServer::setrecvcb(unsigned int cid,tcp_client_obj::srecv_cb cb)
 {
     auto itfind = _clienttab.find(cid);
     if (itfind != _clienttab.end())
         itfind->second->_recvcb = cb;
 }
 
-void tcp_server::setnewcon_cb(newcon_cb cb)
+void tcpServer::setnewcon_cb(newcon_cb cb)
 {
     _newconcb = cb;
 }
 
-void tcp_server::read_alloc_cb(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf)
+void tcpServer::read_alloc_cb(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf)
 {
     if (handle->data == NULL) {
         return;
@@ -281,15 +279,18 @@ void tcp_server::read_alloc_cb(uv_handle_t *handle, size_t suggested_size, uv_bu
     *buf = client->_readbuf;
 }
 
-void tcp_server::read_cb(uv_stream_t *handle, ssize_t nread, const uv_buf_t* buf)
+void tcpServer::read_cb(uv_stream_t *handle, ssize_t nread, const uv_buf_t* buf)
 {
     if (handle->data == NULL) {
         return;
     }
     tcp_client_obj *client = (tcp_client_obj*)handle->data; //服务器的recv带的是tcp_client_obj
     printf("read_cb:%s %x cid:%d\n",buf->base,buf->base,client->id); 
+
+    tcpServer *tsvr = client->_server;
+    tsvr->send(client->id,buf->base,buf->len);
     if (nread < 0) {
-        tcp_server *server = (tcp_server *)client->_server;
+        tcpServer *server = (tcpServer *)client->_server;
         if (nread == UV_EOF) 
         {
             LOGIFS_WARN("客户端("<<client->id<<")主动断开");
@@ -311,7 +312,7 @@ void tcp_server::read_cb(uv_stream_t *handle, ssize_t nread, const uv_buf_t* buf
     }
 }
 
-bool tcp_server::delete_client(unsigned int cid)
+bool tcpServer::delete_client(unsigned int cid)
 {
     // uv_mutex_lock(&mutex_handle_);
     auto itfind = _clienttab.find(cid);

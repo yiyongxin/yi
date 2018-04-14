@@ -4,8 +4,8 @@
 * date:     2018-03-12
 ****************************************/
 
-#ifndef TCP_SERVER_H_
-#define TCP_SERVER_H_
+#ifndef tcpServer_H_
+#define tcpServer_H_
 
 #include <boost/pool/pool.hpp>
 #include <unordered_map>
@@ -15,13 +15,13 @@
 
 #define WRITE_POOL_GRAIN_SIZE 1024
 
-class tcp_server
+class tcpServer
 {
 public:
     typedef void (*newcon_cb)(int cid);
 public:
-    tcp_server(uv_loop_t* loop,char* name = "default server");
-    ~tcp_server();
+    tcpServer(uv_loop_t* loop,char* name = "default server");
+    ~tcpServer();
 private:
     std::string _svr_name;  //该服务的名字
     uv_loop_t *_loop;      //libuv主循环
@@ -46,7 +46,7 @@ private:
     unsigned int get_cid();                 //获取可用客户端编号
     bool delete_client(unsigned int cid);   //删除客户端
 private:
-    static boost::pool<> reqpool;
+    static boost::pool<> _reqpool;
     // static gspool _writ_buf_pool;
 private:
     static void sever_close_cb(uv_handle_t *handle);    //关闭服务端后回调函数
@@ -61,4 +61,4 @@ public:
     void setrecvcb(unsigned int cid,tcp_client_obj::srecv_cb cb);//设置接收回调函数，每个客户端各有一个
 };
 
-#endif //TCP_SERVER_H_
+#endif //tcpServer_H_
