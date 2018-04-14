@@ -76,7 +76,7 @@ void tcpServer::sever_close_cb(uv_handle_t *handle)
 
 void tcpServer::client_close_cb(uv_handle_t *handle)
 {
-    tcp_client_obj *cdata = (tcp_client_obj*)handle->data;
+    tcpClientObj *cdata = (tcpClientObj*)handle->data;
     LOGIFS_INFO("client "<<cdata->id<<" had closed.");
     delete cdata;
 }
@@ -197,7 +197,7 @@ bool tcpServer::send(unsigned int cid, const char* data, size_t len)
         LOGIFS_ERR(_errstr.c_str());
         return false;
     }
-    tcp_client_obj* ttco = itfind->second;
+    tcpClientObj* ttco = itfind->second;
     uv_buf_t buf = uv_buf_init((char*)data,len);
     int iret = uv_write((uv_write_t *)_reqpool.malloc(), (uv_stream_t*)ttco->_client, &buf, 1, send_cb);
     if (iret)
@@ -224,7 +224,7 @@ void tcpServer::accept(uv_stream_t *handle, int status)
     tcpServer *server = (tcpServer *)handle->data;
     unsigned int cid = server->get_cid();
     printf("accept cid:%d\n",cid); 
-    tcp_client_obj* cdata = new tcp_client_obj(cid);
+    tcpClientObj* cdata = new tcpClientObj(cid);
     cdata->_server = server;    //保存服务器的信息
     int iret = uv_tcp_init(server->_loop, cdata->_client);
     if (iret)
@@ -257,7 +257,7 @@ unsigned int tcpServer::get_cid()
     return ++s_id;
 }
 
-void tcpServer::setrecvcb(unsigned int cid,tcp_client_obj::srecv_cb cb)
+void tcpServer::setrecvcb(unsigned int cid,tcpClientObj::srecv_cb cb)
 {
     auto itfind = _clienttab.find(cid);
     if (itfind != _clienttab.end())
@@ -274,7 +274,7 @@ void tcpServer::read_alloc_cb(uv_handle_t *handle, size_t suggested_size, uv_buf
     if (handle->data == NULL) {
         return;
     }
-    tcp_client_obj *client = (tcp_client_obj*)handle->data;
+    tcpClientObj *client = (tcpClientObj*)handle->data;
     printf("alloc_cb cid:%d\n",buf->base,client->id); 
     *buf = client->_readbuf;
 }
@@ -284,7 +284,7 @@ void tcpServer::read_cb(uv_stream_t *handle, ssize_t nread, const uv_buf_t* buf)
     if (handle->data == NULL) {
         return;
     }
-    tcp_client_obj *client = (tcp_client_obj*)handle->data; //服务器的recv带的是tcp_client_obj
+    tcpClientObj *client = (tcpClientObj*)handle->data; //服务器的recv带的是tcpClientObj
     printf("read_cb:%s %x cid:%d\n",buf->base,buf->base,client->id); 
 
     tcpServer *tsvr = client->_server;

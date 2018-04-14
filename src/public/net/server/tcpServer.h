@@ -10,7 +10,7 @@
 #include <boost/pool/pool.hpp>
 #include <unordered_map>
 #include "libuv/uv.h"
-#include "tcp_client_obj.h"
+#include "tcpClientObj.h"
 // #include "../../grainSizePool.h"
 
 #define WRITE_POOL_GRAIN_SIZE 1024
@@ -28,7 +28,7 @@ private:
     uv_tcp_t _server;      //服务器句柄
     bool _isinit;          //是否已初始化
     std::string _errstr;   //错误信息
-    std::unordered_map<unsigned int,tcp_client_obj*> _clienttab; //客户端哈希表
+    std::unordered_map<unsigned int,tcpClientObj*> _clienttab; //客户端哈希表
     newcon_cb _newconcb;   //新连接回调函数
 public:
     bool start(const char *ip, int port, bool isipv6 = false);
@@ -58,7 +58,7 @@ private:
 public:
     bool send(unsigned int cid, const char* data, size_t len);
     void setnewcon_cb(newcon_cb cb);  //服务器-新链接回调函数
-    void setrecvcb(unsigned int cid,tcp_client_obj::srecv_cb cb);//设置接收回调函数，每个客户端各有一个
+    void setrecvcb(unsigned int cid,tcpClientObj::srecv_cb cb);//设置接收回调函数，每个客户端各有一个
 };
 
 #endif //tcpServer_H_
