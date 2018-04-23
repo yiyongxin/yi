@@ -219,7 +219,7 @@ void tcpServer::send_cb(uv_write_t *req, int status)
 
 void tcpServer::accept(uv_stream_t *handle, int status)
 {
-    if (handle->data == NULL)
+    if (handle->data)
         return;
     tcpServer *server = (tcpServer *)handle->data;
     unsigned int cid = server->getCid();
@@ -271,9 +271,8 @@ void tcpServer::setnewcon_cb(newcon_cb cb)
 
 void tcpServer::readAlloc_cb(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf)
 {
-    if (handle->data == NULL) {
+    if (handle->data) 
         return;
-    }
     tcpClientObj *client = (tcpClientObj*)handle->data;
     printf("alloc_cb cid:%d\n",buf->base,client->id); 
     *buf = client->_readbuf;
@@ -281,15 +280,18 @@ void tcpServer::readAlloc_cb(uv_handle_t *handle, size_t suggested_size, uv_buf_
 
 void tcpServer::read_cb(uv_stream_t *handle, ssize_t nread, const uv_buf_t* buf)
 {
-    if (handle->data == NULL) {
+    if (handle->data) 
         return;
-    }
     tcpClientObj *client = (tcpClientObj*)handle->data; //服务器的recv带的是tcpClientObj
     printf("read_cb:%s %x cid:%d\n",buf->base,buf->base,client->id); 
 
     tcpServer *tsvr = client->_server;
-    tsvr->send(client->id,buf->base,buf->len);
-    if (nread < 0) {
+    void* tmall = malloc(nread);
+    memcpy(tmall,buf->base,nread);
+    tsvr->send(client->id,buf->base,nread);
+    
+    if (nread < 0) 
+    {
         tcpServer *server = (tcpServer *)client->_server;
         if (nread == UV_EOF) 
         {
@@ -307,25 +309,24 @@ void tcpServer::read_cb(uv_stream_t *handle, ssize_t nread, const uv_buf_t* buf)
         return;
     } else if (0 == nread)  {/* Everything OK, but nothing read. */
 
-    } else if (client->_recvcb) {
+    } else if (client->_recvcb) 
         client->_recvcb(client->id,buf->base,nread);
-    }
 }
 
 bool tcpServer::deleteClient(unsigned int cid)
 {
     // uv_mutex_lock(&mutex_handle_);
     auto itfind = _clienttab.find(cid);
-    if (itfind == _clienttab.end()) {
+    if (itfind == _clienttab.end()) 
+    {
         _errstr = "can't find client ";
         _errstr += std::to_string((long long)cid);
         LOGIFS_ERR(_errstr.c_str());
         // uv_mutex_unlock(&mutex_handle_);
         return false;
     }
-    if (uv_is_active((uv_handle_t*)itfind->second->_client)) {
+    if (uv_is_active((uv_handle_t*)itfind->second->_client)) 
         uv_read_stop((uv_stream_t*)itfind->second->_client);
-    }
     uv_close((uv_handle_t*)itfind->second->_client,clientClose_cb);
 
     _clienttab.erase(itfind);

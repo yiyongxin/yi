@@ -12,7 +12,7 @@ add_definitions(-D _LOG4CPLUS)
 
 message("${CMAKE_BUILD_TYPE}")
 # set(CMAKE_BUILD_TYPE Debug CACHE STRING "set build type to debug")
-set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -march=native -pthread" )
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -march=native -o3 -pthread" )
 
 set(CMAKE_BUILD_TYPE "Debug")
 
@@ -27,14 +27,14 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_OUT_PAHT})
 INCLUDE_DIRECTORIES(../include ../src ../../../include)
 
 # add_library(fun SHARED ../src/public/test.cpp)
-# add_library(net SHARED ../src/public/net/server/tcp_server.cpp ../src/public/net/server/tcp_client_obj.cpp)
+# add_library(net SHARED ../src/public/net/server/tcpServer.cpp ../src/public/net/server/tcpClientObj.cpp)
 # 指定生成目标
 aux_source_directory(../src/public/ DIR_PUBLIC)
 aux_source_directory(../src/public/server DIR_SERVER)
 add_executable(yisrv 
             ../src/main.cpp 
-            ../src/public/net/server/tcp_server.cpp 
-            ../src/public/net/server/tcp_client_obj.cpp)
+            ../src/public/net/server/tcpServer.cpp 
+            ../src/public/net/server/tcpClientObj.cpp)
 #设置指定目标使用动态库
 target_link_libraries(yisrv ${CMAKE_DL_LIBS})
 # target_link_libraries(yisrv log4cplus)
