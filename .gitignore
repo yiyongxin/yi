@@ -6,3 +6,4 @@ cmake/cmake_install.cmake
 cmake/CMakeFiles
 build/Debug/yisrv
 src/test_src
+lib/third_party
