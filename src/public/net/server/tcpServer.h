@@ -31,7 +31,7 @@ private:
     newcon_cb _newconcb;    //新连接回调函数
     unsigned int _sureCid;  //可用客户端id
 public:
-    bool start(const char *ip, int port, bool isipv6 = false);
+    bool start(const char *ip, int port, int backlog = 1024, bool isipv6 = false);
     void close();
 
     bool setnodelay(bool enable);  //设置是否开启小包合并发送功能
@@ -42,7 +42,7 @@ private:
     bool init();  //初始化
     bool run(int status = UV_RUN_DEFAULT);
     bool bind(const char* ip, int port, bool isipv6 = false);   //绑定ip和端口
-    bool listen(int backlog = 1024);        //开始监听
+    bool listen(int backlog);        //开始监听
     unsigned int getCid();                 //获取可用客户端编号
     bool deleteClient(unsigned int cid);   //删除客户端
 private:

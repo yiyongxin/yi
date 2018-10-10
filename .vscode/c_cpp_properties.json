@@ -5,9 +5,6 @@
             "includePath": [
                 "z:/include",
                 "z:/include/c++/5.4.0",
-                "z:/include/x86_64-linux-gnu/c++/5.4.0",
-                "z:/include/x86_64-linux-gnu",
-                "z:/include/x86_64-linux-gnu/5.4.0",
                 "z:/lib/gcc/x86_64-linux-gnu/5.4.0/include",
                 "${workspaceRoot}/include",
                 "${workspaceRoot}/src/public",
@@ -26,9 +23,6 @@
                 "path": [
                     "z:/include",
                     "z:/include/c++/5.4.0",
-                    "z:/include/x86_64-linux-gnu/c++/5.4.0",
-                    "z:/include/x86_64-linux-gnu",
-                    "z:/include/x86_64-linux-gnu/5.4.0",
                     "z:/lib/gcc/x86_64-linux-gnu/5.4.0/include",
                     "${workspaceRoot}/include",
                     "${workspaceRoot}/src/public",
