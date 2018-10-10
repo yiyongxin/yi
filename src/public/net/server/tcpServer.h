@@ -11,7 +11,6 @@
 #include <unordered_map>
 #include "libuv/uv.h"
 #include "tcpClientObj.h"
-// #include "../../grainSizePool.h"
 
 #define WRITE_POOL_GRAIN_SIZE 1024
 
@@ -29,7 +28,8 @@ private:
     bool _isinit;          //是否已初始化
     std::string _errstr;   //错误信息
     std::unordered_map<unsigned int,tcpClientObj*> _clienttab; //客户端哈希表
-    newcon_cb _newconcb;   //新连接回调函数
+    newcon_cb _newconcb;    //新连接回调函数
+    unsigned int _sureCid;  //可用客户端id
 public:
     bool start(const char *ip, int port, bool isipv6 = false);
     void close();

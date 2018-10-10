@@ -48,9 +48,10 @@ extern log4cplus::Logger _logger_fatal;
 //         LOG4CPLUS_FATAL(_logger_fatal,str);\
 //     }
 
+// #include<iostream>
 
 #define LOGIFS_ERR(str)
-#define LOGIFS_INFO(str)
+#define LOGIFS_INFO(str) //   std::cout << str;
 #define LOGIFS_DEBUG(str)
 #define LOGIFS_WARN(str)
 #define LOGIFS_FATAL(str)

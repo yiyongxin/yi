@@ -64,7 +64,12 @@
 			"strstream": "cpp",
 			"codecvt": "cpp",
 			"complex": "cpp",
-			"iomanip": "cpp"
+			"iomanip": "cpp",
+			"xstring": "cpp",
+			"xlocmes": "cpp",
+			"xlocale": "cpp",
+			"iterator": "cpp",
+			"xutility": "cpp"
 		},
 	}
 }
