@@ -178,7 +178,7 @@ void tcpServer::accept(uv_stream_t *cliHandle, int status)
         return;
     tcpServer *server = (tcpServer *)cliHandle->data;
     unsigned int cid = server->getCid();
-    printf("accept cid:%d\n",cid); 
+    LOGIFS_DEBUG("accept cid:" << cid); 
     tcpClientObj* cdata = new tcpClientObj(cid);
     cdata->_server = server;    //保存服务器的信息
     int errcode = uv_tcp_init(server->_loop, cdata->_client);
@@ -231,7 +231,7 @@ void tcpServer::readAlloc_cb(uv_handle_t *svrHandle, size_t suggested_size, uv_b
     if (!svrHandle->data) 
         return;
     tcpClientObj *client = (tcpClientObj*)svrHandle->data;
-    printf("alloc_cb cid:%d\n",client->id); 
+    LOGIFS_DEBUG("alloc_cb cid:" << client->id); 
     *buf = client->_readbuf;
 }
 
@@ -241,7 +241,7 @@ void tcpServer::read_cb(uv_stream_t *svrHandle, ssize_t nread, const uv_buf_t* b
         return;
     tcpClientObj *client = (tcpClientObj*)svrHandle->data; //服务器的recv带的是tcpClientObj
 
-    printf("read_cb:%s %x cid:%d\n",buf->base,buf->base,client->id); 
+    LOGIFS_DEBUG("read_cb:" << buf->base << " " << buf->base << "cid:" << client->id); 
     if(nread>0)
     {
         tcpServer *tsvr = client->_server;
@@ -252,6 +252,7 @@ void tcpServer::read_cb(uv_stream_t *svrHandle, ssize_t nread, const uv_buf_t* b
 
     if (nread < 0) 
     {
+        tcpServer *server = (tcpServer *)client->_server;
         if (nread == UV_EOF) 
         {
             LOGIFS_WARN("客户端("<<client->id<<")主动断开");
@@ -262,9 +263,9 @@ void tcpServer::read_cb(uv_stream_t *svrHandle, ssize_t nread, const uv_buf_t* b
         } 
         else 
         {
-            LOGIFS_WARN("客户端("<<client->id<<")异常断开："<<libuv_err_str(_errstr,nread).c_str());
+            libuv_err_str(server->_errstr,nread);
+            LOGIFS_WARN("客户端("<<client->id<<")异常断开："<<server->_errstr.c_str());
         }
-        tcpServer *server = (tcpServer *)client->_server;
         server->deleteClient(client->id);//连接断开，关闭客户端
         return;
     } else if (0 == nread)  {/* Everything OK, but nothing read. */
@@ -311,7 +312,11 @@ bool tcpServer::send(unsigned int cid, const char* data, size_t len)
 void tcpServer::send_cb(uv_write_t *req, int status)
 {
     if (status < 0)
-        LOGIFS_ERR("发送数据有误:"<<libuv_err_str(_errstr,status).c_str());
+    {
+        tcpServer* tempServer = (tcpServer*)((tcpClientObj*)(req->handle->data))->_server;
+        libuv_err_str(tempServer->_errstr,status);
+        LOGIFS_ERR("发送数据有误:"<<tempServer->_errstr.c_str());
+    }
     uv_buf_t *buf = req->bufs;
     _reqpool.free(req);
 }

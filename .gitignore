@@ -7,3 +7,5 @@ cmake/CMakeFiles
 build/Debug/yisrv
 src/test_src
 lib/third_party
+build/Debug/log/*
+

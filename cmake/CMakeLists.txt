@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 3.0)
 # 项目信息
 project (yisrv)
 
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++17)
 
 #预设置宏 _LOG4CPLUS 启动lop4cpuls日志库
 add_definitions(-D _LOG4CPLUS)
@@ -12,7 +12,7 @@ add_definitions(-D _LOG4CPLUS)
 
 message("${CMAKE_BUILD_TYPE}")
 # set(CMAKE_BUILD_TYPE Debug CACHE STRING "set build type to debug")
-set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -march=native -o3 -pthread" )
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -march=native -o3 -pthread" )
 
 set(CMAKE_BUILD_TYPE "Debug")
 
@@ -37,5 +37,5 @@ add_executable(yisrv
             ../src/public/net/server/tcpClientObj.cpp)
 #设置指定目标使用动态库
 target_link_libraries(yisrv ${CMAKE_DL_LIBS})
-# target_link_libraries(yisrv log4cplus)
+target_link_libraries(yisrv log4cplus)
 target_link_libraries(yisrv uv)

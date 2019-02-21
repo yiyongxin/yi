@@ -13,7 +13,6 @@
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "__POSIX__ ",
                 "__x86_64__ ",
                 "__linux__",
                 "_LOG4CPLUS"
