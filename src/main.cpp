@@ -4,11 +4,8 @@
 * date:     2018-04-08
 ****************************************/
 
-// #include <stdlib.h>  
-// #include <stdio.h>
-
-#include "public/log.hpp"
-#include "public/logifs.h"
+#include "public/log/log.hpp"
+#include "public/log/logifs.h"
 #include "test_src/test.h"
 
 int main(int argc, char *argv[])

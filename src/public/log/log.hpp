@@ -21,8 +21,6 @@ void initLog()
     _logger_info = log4cplus::Logger::getInstance("info");
     _logger_warn = log4cplus::Logger::getInstance("warn");
     _logger_fatal = log4cplus::Logger::getInstance("fatal");
-    
-    // log4cplus::Logger::shutdown();
 }
 
 #endif

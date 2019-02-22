@@ -4,11 +4,11 @@
 * date:     2018-03-12
 ****************************************/
 
-#include <stdlib.h>  
-#include <stdio.h>
+// #include <stdlib.h>  
+// #include <stdio.h>
 #include <string.h>
 #include "tcpServer.h"
-#include "../../logifs.h"
+#include "../../log/logifs.h"
 
 inline void libuv_err_str(std::string &err, int errcode)
 {
@@ -241,7 +241,7 @@ void tcpServer::read_cb(uv_stream_t *svrHandle, ssize_t nread, const uv_buf_t* b
         return;
     tcpClientObj *client = (tcpClientObj*)svrHandle->data; //服务器的recv带的是tcpClientObj
 
-    LOGIFS_DEBUG("read_cb:" << buf->base << " " << buf->base << "cid:" << client->id); 
+    LOGIFS_DEBUG("read_cb:" << buf->base << " cid:" << client->id); 
     if(nread>0)
     {
         tcpServer *tsvr = client->_server;
@@ -350,7 +350,7 @@ bool tcpServer::deleteClient(unsigned int cid)
     uv_close((uv_handle_t*)itfind->second->_client,clientClose_cb);
 
     _clienttab.erase(itfind);
-    LOGIFS_INFO("删除客户端"<<cid);
+    LOGIFS_INFO("delete client cid:"<<cid);
     // uv_mutex_unlock(&mutex_handle_);
     return true;
 }
