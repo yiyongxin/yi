@@ -4,8 +4,6 @@
 * date:     2018-03-12
 ****************************************/
 
-// #include <stdlib.h>  
-// #include <stdio.h>
 #include <string.h>
 #include "tcpServer.h"
 #include "../../log/logifs.h"

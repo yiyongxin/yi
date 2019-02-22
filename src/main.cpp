@@ -6,7 +6,7 @@
 
 #include "public/log/log.hpp"
 #include "public/log/logifs.h"
-#include "test_src/test.h"
+#include "test/test.h"
 
 int main(int argc, char *argv[])
 {
