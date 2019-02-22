@@ -4,8 +4,8 @@
 * date:     2018-04-08
 ****************************************/
 
-#include "public/log/log.hpp"
-#include "public/log/logifs.h"
+#include "common/log/log.hpp"
+#include "common/log/logifs.h"
 #include "test/test.h"
 
 int main(int argc, char *argv[])

@@ -144,7 +144,7 @@ std::string LIBPROTOBUF_EXPORT VersionString(int version);
 
 
 // ===================================================================
-// from google3/util/utf8/public/unilib.h
+// from google3/util/utf8/common/unilib.h
 
 class StringPiece;
 namespace internal {

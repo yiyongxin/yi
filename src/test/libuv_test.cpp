@@ -1,4 +1,4 @@
-#include "../public/net/server/tcpServer.h"
+#include "../common/net/server/tcpServer.h"
 #include "libuv/uv.h"
 
 namespace libuv_test

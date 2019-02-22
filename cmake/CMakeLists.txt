@@ -26,15 +26,15 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_OUT_PAHT})
 
 INCLUDE_DIRECTORIES(../include ../src ../../../include)
 
-# add_library(fun SHARED ../src/public/test.cpp)
-# add_library(net SHARED ../src/public/net/server/tcpServer.cpp ../src/public/net/server/tcpClientObj.cpp)
+# add_library(fun SHARED ../src/common/test.cpp)
+# add_library(net SHARED ../src/common/net/server/tcpServer.cpp ../src/common/net/server/tcpClientObj.cpp)
 # 指定生成目标
-aux_source_directory(../src/public/ DIR_PUBLIC)
-aux_source_directory(../src/public/server DIR_SERVER)
+aux_source_directory(../src/common/ DIR_PUBLIC)
+aux_source_directory(../src/common/server DIR_SERVER)
 add_executable(yisrv 
             ../src/main.cpp 
-            ../src/public/net/server/tcpServer.cpp 
-            ../src/public/net/server/tcpClientObj.cpp)
+            ../src/common/net/server/tcpServer.cpp 
+            ../src/common/net/server/tcpClientObj.cpp)
 #设置指定目标使用动态库
 target_link_libraries(yisrv ${CMAKE_DL_LIBS})
 target_link_libraries(yisrv log4cplus)
