@@ -1,3 +1,6 @@
+#ifndef LOG_H_
+#define LOG_H_
+
 #ifdef _LOG4CPLUS
 #include <log4cplus/logger.h>
 #include <log4cplus/configurator.h>
@@ -24,3 +27,5 @@ void initLog()
 }
 
 #endif
+
+#endif //LOG_H_

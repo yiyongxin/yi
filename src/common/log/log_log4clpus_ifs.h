@@ -3,6 +3,8 @@
 * author:   易雍鑫
 * date:     2019-02-22
 ****************************************/
+#ifndef LOG_LOG4CLPUS_IFS_H_
+#define LOG_LOG4CLPUS_IFS_H_
 
 #include <log4cplus/logger.h>
 #include <log4cplus/configurator.h>
@@ -46,3 +48,5 @@ extern log4cplus::Logger _logger_fatal;
         /*LOG4CPLUS_FATAL(_logger_fatal,__FILE__ << ":" << __LINE__ << " " << __FUNCTION__);*/\
         LOG4CPLUS_FATAL(_logger_fatal,str);\
     }
+    
+#endif //LOG_LOG4CLPUS_IFS_H_

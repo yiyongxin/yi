@@ -3,6 +3,8 @@
 * author:   易雍鑫
 * date:     2018-03-14
 ****************************************/
+#ifndef LOG_IFS_H_
+#define LOG_IFS_H_
 
 #ifdef _LOG4CPLUS
     #include "log_log4clpus_ifs.h"
@@ -16,3 +18,5 @@
     #define LOGIFS_FATAL(str)
 
 #endif
+
+#endif //LOG_IFS_H_
