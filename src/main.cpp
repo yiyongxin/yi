@@ -5,7 +5,7 @@
 ****************************************/
 
 #include "common/log/log.hpp"
-#include "common/log/logifs.h"
+#include "common/log/log_ifs.h"
 #include "test/test.h"
 
 int main(int argc, char *argv[])

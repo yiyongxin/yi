@@ -9,7 +9,7 @@
 
 #include <string>
 #include "libuv/uv.h"
-#include "log/logifs.h"
+#include "log/log_ifs.h"
 
 extern std::string GetUVError(int errcode);
 
