@@ -5,7 +5,7 @@
 ****************************************/
 
 #ifdef _LOG4CPLUS
-    #include "log_ifs_log4clpus.h"
+    #include "log_log4clpus_ifs.h"
 #else
     #include<iostream>
     

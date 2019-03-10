@@ -32,7 +32,7 @@ INCLUDE_DIRECTORIES(../include ../src ../../../include)
 aux_source_directory(../src/common/ DIR_PUBLIC)
 aux_source_directory(../src/common/server DIR_SERVER)
 add_executable(yisrv 
-            ../src/main.cpp 
+            ../src/frame/main.cpp 
             ../src/common/net/server/tcpServer.cpp 
             ../src/common/net/server/tcpClientObj.cpp)
 #设置指定目标使用动态库
