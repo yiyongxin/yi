@@ -27,7 +27,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_OUT_PAHT})
 INCLUDE_DIRECTORIES(../include ../src ../../../include)
 
 # add_library(fun SHARED ../src/common/test.cpp)
-# add_library(net SHARED ../src/common/net/server/tcpServer.cpp ../src/common/net/server/tcpClientObj.cpp)
+add_library(net SHARED ../src/common/net/server/tcpServer.cpp ../src/common/net/server/tcpClientObj.cpp)
 # 指定生成目标
 aux_source_directory(../src/common/ DIR_PUBLIC)
 aux_source_directory(../src/common/server DIR_SERVER)

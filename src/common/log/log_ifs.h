@@ -6,6 +6,9 @@
 #ifndef LOG_IFS_H_
 #define LOG_IFS_H_
 
+// extern void initLog()
+// extern void closeLog()
+
 #ifdef _LOG4CPLUS
     #include "log_log4clpus_ifs.h"
 #else

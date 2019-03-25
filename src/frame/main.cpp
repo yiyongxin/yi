@@ -11,8 +11,9 @@
 int main(int argc, char *argv[])
 {
     initLog();
-    LOG4CPLUS_INFO(_logger_info,"start log");
+    
     test_src();
-    log4cplus::Logger::shutdown();
+    
+    closeLog();
     return 1;
 }
