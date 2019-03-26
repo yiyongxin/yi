@@ -183,7 +183,7 @@ namespace log4cplus {
         /**
          * Set the {@link ErrorHandler} for this Appender.
          */
-        virtual void setErrorHandler(std::auto_ptr<ErrorHandler> eh);
+        virtual void setErrorHandler(std::unique_ptr<ErrorHandler> eh);
 
         /**
          * Return the currently set {@link ErrorHandler} for this
@@ -196,7 +196,7 @@ namespace log4cplus {
          * their own (fixed) layouts or do not use one. For example, the
          * SocketAppender ignores the layout set here.
          */
-        virtual void setLayout(std::auto_ptr<Layout> layout);
+        virtual void setLayout(std::unique_ptr<Layout> layout);
 
         /**
          * Returns the layout of this appender. The value may be NULL.
@@ -254,7 +254,7 @@ namespace log4cplus {
       // Data
         /** The layout variable does not need to be set if the appender
          *  implementation has its own layout. */
-        std::auto_ptr<Layout> layout;
+        std::unique_ptr<Layout> layout;
 
         /** Appenders are named. */
         log4cplus::tstring name;
@@ -267,10 +267,10 @@ namespace log4cplus {
         log4cplus::spi::FilterPtr filter;
 
         /** It is assumed and enforced that errorHandler is never null. */
-        std::auto_ptr<ErrorHandler> errorHandler;
+        std::unique_ptr<ErrorHandler> errorHandler;
 
         //! Optional system wide synchronization lock.
-        std::auto_ptr<helpers::LockFile> lockFile;
+        std::unique_ptr<helpers::LockFile> lockFile;
 
         //! Use lock file for inter-process synchronization of access
         //! to log file.

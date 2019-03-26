@@ -291,8 +291,7 @@ bool tcpServer::send(unsigned int cid, const char* data, size_t len)
     auto itfind = _clienttab.find(cid);
     if (itfind == _clienttab.end())
     {
-        _errstr = "can't find cliendid ";
-        _errstr += std::to_string((long long)cid);
+        _errstr = "can't find cliend id: " + cid;
         LOGIFS_ERR(_errstr.c_str());
         return false;
     }
@@ -316,7 +315,6 @@ void tcpServer::send_cb(uv_write_t *req, int status)
         libuv_err_str(tempServer->_errstr,status);
         LOGIFS_ERR("发送数据有误:"<<tempServer->_errstr.c_str());
     }
-    uv_buf_t *buf = req->bufs;
     _reqpool.free(req);
 }
 
@@ -338,8 +336,7 @@ bool tcpServer::deleteClient(unsigned int cid)
     auto itfind = _clienttab.find(cid);
     if (itfind == _clienttab.end()) 
     {
-        _errstr = "can't find client ";
-        _errstr += std::to_string((long long)cid);
+        _errstr = "can't find client id: " + cid;
         LOGIFS_ERR(_errstr.c_str());
         // uv_mutex_unlock(&mutex_handle_);
         return false;

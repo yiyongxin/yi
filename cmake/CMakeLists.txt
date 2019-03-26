@@ -12,7 +12,7 @@ add_definitions(-D _LOG4CPLUS)
 
 message("${CMAKE_BUILD_TYPE}")
 # set(CMAKE_BUILD_TYPE Debug CACHE STRING "set build type to debug")
-set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -march=native -o3 -pthread" )
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -march=native -o3 -pthread -fcoroutines-ts -stdlib=libc++" )
 
 set(CMAKE_BUILD_TYPE "Debug")
 

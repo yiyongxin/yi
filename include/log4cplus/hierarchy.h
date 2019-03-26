@@ -212,7 +212,7 @@ namespace log4cplus {
         /**
          * Set the default LoggerFactory instance.
          */
-        virtual void setLoggerFactory(std::auto_ptr<spi::LoggerFactory> factory);
+        virtual void setLoggerFactory(std::unique_ptr<spi::LoggerFactory> factory);
         
         /**
          * Returns the default LoggerFactory instance.
@@ -297,7 +297,7 @@ namespace log4cplus {
 
      // Data
         thread::Mutex hashtable_mutex;
-        std::auto_ptr<spi::LoggerFactory> defaultFactory;
+        std::unique_ptr<spi::LoggerFactory> defaultFactory;
         ProvisionNodeMap provisionNodes;
         LoggerMap loggerPtrs;
         Logger root;

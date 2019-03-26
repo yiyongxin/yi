@@ -8,6 +8,7 @@
 #include "../common/log/log_ifs.h"
 #include "../test/test.h"
 
+
 int main(int argc, char *argv[])
 {
     initLog();
@@ -15,5 +16,6 @@ int main(int argc, char *argv[])
     test_src();
     
     closeLog();
+    
     return 1;
 }

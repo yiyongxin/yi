@@ -84,7 +84,7 @@ namespace log4cplus {
         class LOG4CPLUS_EXPORT LayoutFactory : public BaseFactory {
         public:
             typedef Layout ProductType;
-            typedef std::auto_ptr<Layout> ProductPtr;
+            typedef std::unique_ptr<Layout> ProductPtr;
 
             LayoutFactory();
             virtual ~LayoutFactory() = 0;
@@ -92,7 +92,7 @@ namespace log4cplus {
             /**
              * Create a "Layout" object.
              */
-            virtual std::auto_ptr<Layout> createObject(const log4cplus::helpers::Properties& props) = 0;
+            virtual std::unique_ptr<Layout> createObject(const log4cplus::helpers::Properties& props) = 0;
         };
 
 
@@ -161,7 +161,7 @@ namespace log4cplus {
              * Used to enter an object into the registry.  (The registry now
              *  owns <code>object</code>.)
              */
-            bool put(std::auto_ptr<T> object) {
+            bool put(std::unique_ptr<T> object) {
                  bool putValResult = putVal(object->getTypeName(), object.get());
                  object.release();
                  return putValResult; 
@@ -248,7 +248,7 @@ namespace log4cplus {
 
         #define LOG4CPLUS_REG_PRODUCT(reg, productprefix, productname, productns, productfact) \
         reg.put (																               \
-            std::auto_ptr<productfact> (                                                       \
+            std::unique_ptr<productfact> (                                                       \
                     new log4cplus::spi::FactoryTempl<productns productname, productfact> (     \
                     LOG4CPLUS_TEXT(productprefix)                                              \
                     LOG4CPLUS_TEXT(#productname))))
@@ -266,7 +266,7 @@ namespace log4cplus {
             log4cplus::spi::FilterFactory)
 
         #define LOG4CPLUS_REG_LOCALE(reg, name, factory)            \
-            reg.put (std::auto_ptr<log4cplus::spi::LocaleFactory> ( \
+            reg.put (std::unique_ptr<log4cplus::spi::LocaleFactory> ( \
                     new factory (name)))
     } // namespace spi
 }

@@ -5,25 +5,29 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "Y:/linux_usr/include",
+                "Y:/linux_usr/include/x86_64-linux-gnu",
                 "Y:/linux_usr/local/include"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE"
+                "_UNICODE",
+                "_LOG4CPLUS"
             ],
             "browse":{
                 "path": [
+                    "${workspaceFolder}/**",
                     "Y:/linux_usr/include",
+                    "Y:/linux_usr/include/x86_64-linux-gnu",
                     "Y:/linux_usr/local/include"
                 ],
-                "limitSymbolsToIncludedHeaders": true,
+                "limitSymbolsToIncludedHeaders": false,
                 "databaseFilename": ""
             },
-            "intelliSenseMode": "clang-x64",
+            "intelliSenseMode":"clang-x64",
             "compilerPath": "D:/Engineering/Software/Microsoft Visual Studio/2017/Enterprise/VC/Tools/MSVC/14.11.25503/bin/Hostx64/x64/cl.exe",
-            "cStandard": "c11",
-            "cppStandard": "c++17"
+            "cStandard":"c11",
+            "cppStandard":"c++17"
 
         }
     ],
