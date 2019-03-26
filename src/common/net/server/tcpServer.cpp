@@ -6,6 +6,7 @@
 
 #include <string.h>
 #include "tcpServer.h"
+#include <jemalloc/jemalloc.h>
 #include "../../log/log_ifs.h"
 
 inline void libuv_err_str(std::string &err, int errcode)

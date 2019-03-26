@@ -69,7 +69,9 @@
 			"xlocmes": "cpp",
 			"xlocale": "cpp",
 			"iterator": "cpp",
-			"xutility": "cpp"
+			"xutility": "cpp",
+			"ios": "cpp",
+			"uv-errno.h": "c"
 		},
 	}
 }
