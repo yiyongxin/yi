@@ -5,6 +5,6 @@
 void test_src()
 {
     // malloc_test::test();
-    libuv_test::test();
     co_test();
+    libuv_test::test();
 }
