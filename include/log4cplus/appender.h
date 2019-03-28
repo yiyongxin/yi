@@ -5,7 +5,7 @@
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2001-2015 Tad E. Smith
+// Copyright 2001-2017 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,6 +38,9 @@
 #include <log4cplus/helpers/lockfile.h>
 
 #include <memory>
+#include <mutex>
+#include <atomic>
+#include <condition_variable>
 
 
 namespace log4cplus {
@@ -124,6 +127,11 @@ namespace log4cplus {
      * is mandatory.
      * \sa FileAppender
      * </dd>
+     *
+     * <dt><tt>AsyncAppend</tt></dt>
+     * <dd>Set this property to <tt>true</tt> if you want all appends using
+     * this appender to be done asynchronously. Default is <tt>false</tt>.</dd>
+     *
      * </dl>
      */
     class LOG4CPLUS_EXPORT Appender
@@ -151,7 +159,7 @@ namespace log4cplus {
         /**
          * Release any resources allocated within the appender such as file
          * handles, network connections, etc.
-         * 
+         *
          * It is a programming error to append to a closed appender.
          */
         virtual void close() = 0;
@@ -165,6 +173,20 @@ namespace log4cplus {
          * This method performs threshold checks and invokes filters before
          * delegating actual logging to the subclasses specific {@link
          * #append} method.
+         */
+        void syncDoAppend(const log4cplus::spi::InternalLoggingEvent& event);
+
+        /**
+         * This method performs book keeping related to asynchronous logging
+         * and executes `syncDoAppend()` to do the actual logging.
+         */
+
+        void asyncDoAppend(const log4cplus::spi::InternalLoggingEvent& event);
+
+        /**
+         * This function checks `async` flag. It either executes
+         * `syncDoAppend()` directly or enqueues its execution to thread pool
+         * thread.
          */
         void doAppend(const log4cplus::spi::InternalLoggingEvent& event);
 
@@ -200,7 +222,7 @@ namespace log4cplus {
 
         /**
          * Returns the layout of this appender. The value may be NULL.
-         * 
+         *
          * This class owns the returned pointer.
          */
         virtual Layout* getLayout();
@@ -208,12 +230,23 @@ namespace log4cplus {
         /**
          * Set the filter chain on this Appender.
          */
-        void setFilter(log4cplus::spi::FilterPtr f) { filter = f; }
+        void setFilter(log4cplus::spi::FilterPtr f);
 
         /**
          * Get the filter chain on this Appender.
          */
-        log4cplus::spi::FilterPtr getFilter() const { return filter; }
+        log4cplus::spi::FilterPtr getFilter() const;
+
+        /**
+         * Add filter at the end of the filters chain.
+         */
+        void addFilter (log4cplus::spi::FilterPtr f);
+
+        /**
+         * Add filter at the end of the filters chain.
+         */
+        void addFilter (std::function<
+            spi::FilterResult (const log4cplus::spi::InternalLoggingEvent &)>);
 
         /**
          * Returns this appenders threshold LogLevel. See the {@link
@@ -224,7 +257,7 @@ namespace log4cplus {
         /**
          * Set the threshold LogLevel. All log events with lower LogLevel
          * than the threshold LogLevel are ignored by the appender.
-         * 
+         *
          * In configuration files this option is specified by setting the
          * value of the <b>Threshold</b> option to a LogLevel
          * string, such as "DEBUG", "INFO" and so on.
@@ -239,6 +272,12 @@ namespace log4cplus {
         bool isAsSevereAsThreshold(LogLevel ll) const {
             return ((ll != NOT_SET_LOG_LEVEL) && (ll >= threshold));
         }
+
+        /**
+         * This method waits for all events that are being asynchronously
+         * logged to finish.
+         */
+        void waitToFinishAsyncLogging();
 
     protected:
       // Methods
@@ -276,8 +315,21 @@ namespace log4cplus {
         //! to log file.
         bool useLockFile;
 
+        //! Asynchronous append.
+        bool async;
+#if ! defined (LOG4CPLUS_SINGLE_THREADED)
+        std::atomic<std::size_t> in_flight;
+        std::mutex in_flight_mutex;
+        std::condition_variable in_flight_condition;
+#endif
+
         /** Is this appender closed? */
         bool closed;
+
+    private:
+#if ! defined (LOG4CPLUS_SINGLE_THREADED)
+        void subtract_in_flight();
+#endif
     };
 
     /** This is a pointer to an Appender. */
@@ -286,4 +338,3 @@ namespace log4cplus {
 } // end namespace log4cplus
 
 #endif // LOG4CPLUS_APPENDER_HEADER_
-

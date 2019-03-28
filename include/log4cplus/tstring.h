@@ -5,7 +5,7 @@
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2003-2015 Tad E. Smith
+// Copyright 2003-2017 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,14 +30,16 @@
 #pragma once
 #endif
 
+#include <type_traits>
 #include <string>
+#include <string_view>
 #include <log4cplus/tchar.h>
 
 namespace log4cplus
 {
 
-typedef std::basic_string<tchar> tstring;
-
+using tstring = std::basic_string<tchar>;
+using tstring_view = std::basic_string_view<tchar>;
 
 namespace helpers
 {
@@ -47,6 +49,17 @@ std::string
 tostring (char const * str)
 {
     return std::string (str);
+}
+
+template <typename SV>
+inline
+std::enable_if_t<
+    std::is_convertible_v<SV const &, std::string_view>
+    && std::is_convertible_v<SV const &, char const *>,
+    std::string>
+tostring (SV const & sv)
+{
+    return std::string (sv);
 }
 
 inline
@@ -63,7 +76,6 @@ tostring (std::string & str)
     return str;
 }
 
-#ifdef LOG4CPLUS_HAVE_RVALUE_REFS
 inline
 std::string
 tostring (std::string && str)
@@ -71,15 +83,23 @@ tostring (std::string && str)
     return std::move (str);
 }
 
-#endif
-
-
 
 inline
 std::wstring
 towstring (wchar_t const * str)
 {
     return std::wstring (str);
+}
+
+template <typename SV>
+inline
+std::enable_if_t<
+    std::is_convertible_v<SV const &, std::wstring_view>
+    && std::is_convertible_v<SV const &, wchar_t const *>,
+    std::wstring>
+towstring (SV const & sv)
+{
+    return std::wstring (sv);
 }
 
 inline
@@ -90,26 +110,26 @@ towstring (std::wstring const & str)
 }
 
 inline
-std::wstring const & 
+std::wstring const &
 towstring (std::wstring & str)
 {
     return str;
 }
 
-#ifdef LOG4CPLUS_HAVE_RVALUE_REFS
 inline
-std::wstring 
+std::wstring
 towstring (std::wstring && str)
 {
     return std::move (str);
 }
 
-#endif
 
 LOG4CPLUS_EXPORT std::string tostring(const std::wstring&);
+LOG4CPLUS_EXPORT std::string tostring(const std::wstring_view&);
 LOG4CPLUS_EXPORT std::string tostring(wchar_t const *);
 
 LOG4CPLUS_EXPORT std::wstring towstring(const std::string&);
+LOG4CPLUS_EXPORT std::wstring towstring(const std::string_view&);
 LOG4CPLUS_EXPORT std::wstring towstring(char const *);
 
 } // namespace helpers

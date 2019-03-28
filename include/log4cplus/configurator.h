@@ -5,7 +5,7 @@
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2003-2015 Tad E. Smith
+// Copyright 2003-2017 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -196,6 +196,11 @@ namespace log4cplus
          * Hierarchy#disable} family of methods by setting the a key
          * "log4cplus.disableOverride" to <code>true</code> or any value other
          * than false. As in <pre>log4cplus.disableOverride=true </pre>
+         *
+         * <h3>Global configuration</h3>
+         *
+         * Property <pre>log4cplus.threadPoolSize</pre> can be used to adjust
+         * size of log4cplus' internal thread pool.
          *
          * <h3>Example</h3>
          *

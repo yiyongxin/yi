@@ -5,7 +5,7 @@
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2002-2015 Tad E. Smith
+// Copyright 2002-2017 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -138,11 +138,11 @@ namespace log4cplus {
 
         /**
          * This template class is used as a "Factory Registry".  Objects are
-         * "entered" into the registry with a "name" using the 
-         * <code>put()</code> method.  (The registry then owns the object.)  
-         * These object can then be retrieved using the <code>get()</code> 
+         * "entered" into the registry with a "name" using the
+         * <code>put()</code> method.  (The registry then owns the object.)
+         * These object can then be retrieved using the <code>get()</code>
          * method.
-         * 
+         *
          * <b>Note:</b>  This class is Thread-safe.
          */
         template<class T>
@@ -164,7 +164,7 @@ namespace log4cplus {
             bool put(std::unique_ptr<T> object) {
                  bool putValResult = putVal(object->getTypeName(), object.get());
                  object.release();
-                 return putValResult; 
+                 return putValResult;
             }
 
             /**
@@ -248,14 +248,14 @@ namespace log4cplus {
 
         #define LOG4CPLUS_REG_PRODUCT(reg, productprefix, productname, productns, productfact) \
         reg.put (																               \
-            std::unique_ptr<productfact> (                                                       \
+            std::unique_ptr<productfact> (                                                     \
                     new log4cplus::spi::FactoryTempl<productns productname, productfact> (     \
                     LOG4CPLUS_TEXT(productprefix)                                              \
                     LOG4CPLUS_TEXT(#productname))))
 
         #define LOG4CPLUS_REG_APPENDER(reg, appendername)                             \
         LOG4CPLUS_REG_PRODUCT (reg, "log4cplus::", appendername, log4cplus::,         \
-            log4cplus::spi::AppenderFactory) 
+            log4cplus::spi::AppenderFactory)
 
         #define LOG4CPLUS_REG_LAYOUT(reg, layoutname)                                 \
         LOG4CPLUS_REG_PRODUCT (reg, "log4cplus::", layoutname, log4cplus::,           \

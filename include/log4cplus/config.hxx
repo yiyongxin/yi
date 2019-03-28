@@ -1,4 +1,4 @@
-//  Copyright (C) 2009-2015, Vaclav Haisman. All rights reserved.
+//  Copyright (C) 2009-2017, Vaclav Haisman. All rights reserved.
 //
 //  Redistribution and use in source and binary forms, with or without modifica-
 //  tion, are permitted provided that the following conditions are met:
@@ -30,14 +30,6 @@
 #  include <log4cplus/config/macosx.h>
 #else
 #  include <log4cplus/config/defines.hxx>
-#endif
-
-#if ! defined (UNICODE) && ! defined (LOG4CPLUS_HAVE_VSNPRINTF_S) \
-    && ! defined (LOG4CPLUS_HAVE__VSNPRINTF_S) \
-    && ! defined (LOG4CPLUS_HAVE_VSNPRINTF) \
-    && ! defined (LOG4CPLUS_HAVE__VSNPRINTF)
-#  undef LOG4CPLUS_USE_POOR_MANS_SNPRINTF
-#  define LOG4CPLUS_USE_POOR_MANS_SNPRINTF
 #endif
 
 # if ! defined (LOG4CPLUS_WORKING_LOCALE) \
@@ -98,22 +90,15 @@
 #  define __has_feature(X) 0
 #endif
 
-#if (defined (_MSC_VER) && _MSC_VER >= 1600) \
-    || defined (__GXX_EXPERIMENTAL_CXX0X__) \
-    || __cplusplus >= 201103L
-#  define LOG4CPLUS_HAVE_CXX11_SUPPORT
-#endif
-
-#if defined (LOG4CPLUS_HAVE_CXX11_SUPPORT) \
-    || __has_feature (cxx_rvalue_references)
-#  define LOG4CPLUS_HAVE_RVALUE_REFS
-#endif
-
-#if defined (LOG4CPLUS_HAVE_CXX11_SUPPORT)          \
-    && (__has_feature(cxx_noexcept)                 \
-        || (defined (_MSC_VER) && _MSC_VER >= 1900))
+#if __has_feature (cxx_noexcept)                       \
+    || (defined (__GNUC__)                             \
+        && (__GNUC__ > 4                               \
+            || __GNUC__ == 4 && __GNUC_MINOR__ >= 6))  \
+    || (defined (_MSC_VER) && _MSC_VER >= 1900)
+#  define LOG4CPLUS_NOEXCEPT noexcept
 #  define LOG4CPLUS_NOEXCEPT_FALSE noexcept(false)
 #else
+#  define LOG4CPLUS_NOEXCEPT /* empty */
 #  define LOG4CPLUS_NOEXCEPT_FALSE /* empty */
 #endif
 
@@ -126,14 +111,16 @@
 #endif
 
 #if defined (__GNUC__) \
-    && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8))
+    && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)) \
+    && ! defined (__INTEL_COMPILER) \
+    && ! defined (__CUDACC__)
 #  define LOG4CPLUS_CALLER_FILE() __builtin_FILE ()
 #  define LOG4CPLUS_CALLER_LINE() __builtin_LINE ()
 #  define LOG4CPLUS_CALLER_FUNCTION() __builtin_FUNCTION ()
 #else
-#  define LOG4CPLUS_CALLER_FILE() (NULL)
+#  define LOG4CPLUS_CALLER_FILE() (nullptr)
 #  define LOG4CPLUS_CALLER_LINE() (-1)
-#  define LOG4CPLUS_CALLER_FUNCTION() (NULL)
+#  define LOG4CPLUS_CALLER_FUNCTION() (nullptr)
 #endif
 
 #if defined (__GNUC__) && __GNUC__ >= 3
@@ -185,7 +172,15 @@
 
 #include <log4cplus/helpers/thread-config.h>
 
+#if defined (LOG4CPLUS_SINGLE_THREADED)
+#define LOG4CPLUS_THREADED(x)
+#else
+#define LOG4CPLUS_THREADED(x) x
+#endif
+
 #if defined(__cplusplus)
+#include <cstddef>
+
 namespace log4cplus
 {
 
@@ -197,7 +192,17 @@ namespace log4cplus
 LOG4CPLUS_EXPORT void threadCleanup ();
 
 //! Initializes log4cplus.
+//!
+//! \note using `log4cplus::Initializer` is preferred
 LOG4CPLUS_EXPORT void initialize ();
+
+//! Deinitializes log4cplus.
+//!
+//! \note using `log4cplus::Initializer` is preferred
+LOG4CPLUS_EXPORT void deinitialize ();
+
+//! Set thread pool size.
+LOG4CPLUS_EXPORT void setThreadPoolSize (std::size_t pool_size);
 
 } // namespace log4cplus
 

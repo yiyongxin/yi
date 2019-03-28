@@ -1,21 +1,15 @@
-// -*- C++ -*-
-// Module:  Log4CPLUS
-// File:    cygwin-win32.h
-// Created: 7/2011
-// Author:  Vaclav Zeman
+//  Copyright (C) 2015-2017, Vaclav Haisman. All rights reserved.
 //
-//  Copyright (C) 2011-2017, Vaclav Zeman. All rights reserved.
-//  
 //  Redistribution and use in source and binary forms, with or without modifica-
 //  tion, are permitted provided that the following conditions are met:
-//  
+//
 //  1. Redistributions of  source code must  retain the above copyright  notice,
 //     this list of conditions and the following disclaimer.
-//  
+//
 //  2. Redistributions in binary form must reproduce the above copyright notice,
 //     this list of conditions and the following disclaimer in the documentation
 //     and/or other materials provided with the distribution.
-//  
+//
 //  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
 //  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 //  FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
@@ -27,8 +21,8 @@
 //  (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
 //  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ! defined (LOG4CPLUS_CONFIG_CYGWIN_WIN32_H)
-#define LOG4CPLUS_CONFIG_CYGWIN_WIN32_H
+#ifndef LOG4CPLUS_LOG4CPLUS_HXX
+#define LOG4CPLUS_LOG4CPLUS_HXX
 
 #include <log4cplus/config.hxx>
 
@@ -36,20 +30,37 @@
 #pragma once
 #endif
 
-#if defined (__CYGWIN__)
+#include <log4cplus/version.h>
+#include <log4cplus/loglevel.h>
+#include <log4cplus/logger.h>
+#include <log4cplus/layout.h>
+#include <log4cplus/hierarchy.h>
+#include <log4cplus/loggingmacros.h>
+#include <log4cplus/tracelogger.h>
+#include <log4cplus/configurator.h>
+#include <log4cplus/appender.h>
+#include <log4cplus/mdc.h>
+#include <log4cplus/ndc.h>
+#include <log4cplus/initializer.h>
+#include <log4cplus/helpers/property.h>
+#include <log4cplus/spi/factory.h>
+#include <log4cplus/spi/filter.h>
+#include <log4cplus/spi/loggingevent.h>
 
-#if ! defined (INSIDE_LOG4CPLUS)
-#  error "This header must not be be used outside log4cplus' implementation files."
+#include <log4cplus/asyncappender.h>
+#include <log4cplus/consoleappender.h>
+#include <log4cplus/fileappender.h>
+#include <log4cplus/socketappender.h>
+#include <log4cplus/syslogappender.h>
+#include <log4cplus/nullappender.h>
+
+#if defined (LOG4CPLUS_WITH_UNIT_TESTS)
+namespace log4cplus
+{
+
+LOG4CPLUS_EXPORT int unit_tests_main (int argc, char* argv[]);
+
+} // namespace log4cplus
 #endif
 
-
-namespace log4cplus { namespace cygwin {
-
-unsigned long get_current_win32_thread_id ();
-void output_debug_stringW (wchar_t const *);
-
-} } // namespace log4cplus { namespace cygwin {
-
-
-#endif // defined (__CYGWIN__)
-#endif // LOG4CPLUS_CONFIG_CYGWIN_WIN32_H
+#endif // LOG4CPLUS_LOG4CPLUS_HXX

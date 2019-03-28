@@ -1,21 +1,16 @@
 // -*- C++ -*-
-// Module:  Log4CPLUS
-// File:    cygwin-win32.h
-// Created: 7/2011
-// Author:  Vaclav Zeman
+//  Copyright (C) 2015-2017, Vaclav Haisman. All rights reserved.
 //
-//  Copyright (C) 2011-2017, Vaclav Zeman. All rights reserved.
-//  
 //  Redistribution and use in source and binary forms, with or without modifica-
 //  tion, are permitted provided that the following conditions are met:
-//  
+//
 //  1. Redistributions of  source code must  retain the above copyright  notice,
 //     this list of conditions and the following disclaimer.
-//  
+//
 //  2. Redistributions in binary form must reproduce the above copyright notice,
 //     this list of conditions and the following disclaimer in the documentation
 //     and/or other materials provided with the distribution.
-//  
+//
 //  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
 //  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 //  FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
@@ -27,8 +22,11 @@
 //  (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
 //  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ! defined (LOG4CPLUS_CONFIG_CYGWIN_WIN32_H)
-#define LOG4CPLUS_CONFIG_CYGWIN_WIN32_H
+
+/** @file */
+
+#ifndef LOG4CPLUS_CALLBACK_APPENDER_HEADER_
+#define LOG4CPLUS_CALLBACK_APPENDER_HEADER_
 
 #include <log4cplus/config.hxx>
 
@@ -36,20 +34,40 @@
 #pragma once
 #endif
 
-#if defined (__CYGWIN__)
-
-#if ! defined (INSIDE_LOG4CPLUS)
-#  error "This header must not be be used outside log4cplus' implementation files."
-#endif
+#include <log4cplus/appender.h>
+#include <log4cplus/clogger.h>
 
 
-namespace log4cplus { namespace cygwin {
+namespace log4cplus {
 
-unsigned long get_current_win32_thread_id ();
-void output_debug_stringW (wchar_t const *);
+/**
+* Send log events to a C function callback.
+*/
+class LOG4CPLUS_EXPORT CallbackAppender
+    : public Appender {
+public:
+    CallbackAppender();
+    CallbackAppender(log4cplus_log_event_callback_t callback, void * cookie);
+    CallbackAppender(const log4cplus::helpers::Properties&);
 
-} } // namespace log4cplus { namespace cygwin {
+    virtual ~CallbackAppender();
+    virtual void close();
 
+    void setCookie(void *);
+    void setCallback(log4cplus_log_event_callback_t);
 
-#endif // defined (__CYGWIN__)
-#endif // LOG4CPLUS_CONFIG_CYGWIN_WIN32_H
+protected:
+    virtual void append(const log4cplus::spi::InternalLoggingEvent& event);
+
+private:
+    log4cplus_log_event_callback_t callback;
+    void * cookie;
+
+    // Disallow copying of instances of this class
+    CallbackAppender(const CallbackAppender&) = delete;
+    CallbackAppender& operator=(const CallbackAppender&) = delete;
+};
+
+} // end namespace log4cplus
+
+#endif // LOG4CPLUS_CALLBACK_APPENDER_HEADER_
