@@ -8,8 +8,6 @@ add_compile_options(-std=c++17)
 #预设置宏 _LOG4CPLUS 启动lop4cpuls日志库
 add_definitions(-D _LOG4CPLUS)
 
-# aux_source_directory(. utils_src)     #查找路径下所有源代码
-
 message("${CMAKE_BUILD_TYPE}")
 # set(CMAKE_BUILD_TYPE Debug CACHE STRING "set build type to debug")
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -march=native -o3 -pthread -fcoroutines-ts -stdlib=libc++" )
@@ -28,14 +26,17 @@ INCLUDE_DIRECTORIES(../include ../src ../../../include)
 
 # add_library(fun SHARED ../src/common/test.cpp)
 add_library(net SHARED ../src/common/net/server/tcpServer.cpp ../src/common/net/server/tcpClientObj.cpp)
+#查找路径下所有源代码
+aux_source_directory(../src/common/ DIR_PUBLIC) 
+aux_source_directory(../src/common/net/server DIR_SERVER)
+aux_source_directory(../src/protobuf DIR_PROTOBUF)
 # 指定生成目标
-aux_source_directory(../src/common/ DIR_PUBLIC)
-aux_source_directory(../src/common/server DIR_SERVER)
 add_executable(yisrv 
             ../src/frame/main.cpp 
-            ../src/common/net/server/tcpServer.cpp 
-            ../src/common/net/server/tcpClientObj.cpp)
+            ${DIR_SERVER}
+            ${DIR_PROTOBUF})
 #设置指定目标使用动态库
 target_link_libraries(yisrv ${CMAKE_DL_LIBS})
 target_link_libraries(yisrv log4cplus)
 target_link_libraries(yisrv uv)
+target_link_libraries(yisrv protobuf)
