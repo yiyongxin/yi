@@ -12,7 +12,8 @@
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE",
-                "_LOG4CPLUS"
+                "_LOG4CPLUS",
+                "__cpp_coroutines=201703"
             ],
             "browse":{
                 "path": [

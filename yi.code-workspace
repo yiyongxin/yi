@@ -92,7 +92,8 @@
 			"xstddef": "cpp",
 			"xtr1common": "cpp",
 			"xtree": "cpp",
-			"coroutine": "cpp"
+			"coroutine": "cpp",
+			"resumable": "cpp"
 		},
 	}
 }

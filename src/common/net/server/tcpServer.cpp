@@ -275,7 +275,6 @@ void tcpServer::read_cb(uv_stream_t *svrHandle, ssize_t nread, const uv_buf_t* b
 
 bool tcpServer::start(const char *ip, int port, int backlog, bool isipv6)
 {
-    close();
     if (!init())
         return false;
     if (!bind(ip,port,isipv6))

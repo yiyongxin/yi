@@ -8,3 +8,4 @@ src/test_src
 lib/third_party
 build/Debug/log/*
 .vscode/ipch
+src/protobuf/*
