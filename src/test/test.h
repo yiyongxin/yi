@@ -1,4 +1,4 @@
-// #include "malloc_test.cpp"
+#include "malloc_test.cpp"
 #include "libuv_test.cpp"
 #include "co_test.cpp"
 

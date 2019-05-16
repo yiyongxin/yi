@@ -32,7 +32,7 @@ namespace malloc_test
                 tpool.free(buf[i]);
             }
             gettimeofday(&endtime, NULL);
-            printf("pool: %lld\n",(endtime.tv_sec - NowTime.tv_sec) * 1000 * 1000 + (endtime.tv_usec - NowTime.tv_usec)); 
+            printf("pool: %ld\n",(endtime.tv_sec - NowTime.tv_sec) * 1000 * 1000 + (endtime.tv_usec - NowTime.tv_usec)); 
             // printf("pool: %d:%d  %d:%d\n",endtime.tv_sec,endtime.tv_usec, NowTime.tv_sec,NowTime.tv_usec); 
 
             gettimeofday(&NowTime, NULL);
@@ -45,7 +45,7 @@ namespace malloc_test
                 free(buf[i]);
             }
             gettimeofday(&endtime, NULL);
-            printf("malloc: %lld\n",(endtime.tv_sec - NowTime.tv_sec) * 1000 * 1000 + (endtime.tv_usec - NowTime.tv_usec)); 
+            printf("malloc: %ld\n",(endtime.tv_sec - NowTime.tv_sec) * 1000 * 1000 + (endtime.tv_usec - NowTime.tv_usec)); 
             // printf("pool: %d:%d  %d:%d\n",endtime.tv_sec,endtime.tv_usec, NowTime.tv_sec,NowTime.tv_usec); 
 
             gettimeofday(&NowTime, NULL);
@@ -55,10 +55,10 @@ namespace malloc_test
             // }
             // for(int i = 0;i < max;i++)
             // {
-                delete buf[i];
+                delete ((char*)buf[i]);
             }
             gettimeofday(&endtime, NULL);
-            printf("new: %lld\n",(endtime.tv_sec - NowTime.tv_sec) * 1000 * 1000 + (endtime.tv_usec - NowTime.tv_usec)); 
+            printf("new: %ld\n",(endtime.tv_sec - NowTime.tv_sec) * 1000 * 1000 + (endtime.tv_usec - NowTime.tv_usec)); 
             // printf("pool: %d:%d  %d:%d\n",endtime.tv_sec,endtime.tv_usec, NowTime.tv_sec,NowTime.tv_usec); 
 
             gettimeofday(&NowTime, NULL);
@@ -67,7 +67,7 @@ namespace malloc_test
                 memcpy(buf[i],buf[0],size); 
             }
             gettimeofday(&endtime, NULL);
-            printf("copy: %lld\n",(endtime.tv_sec - NowTime.tv_sec) * 1000 * 1000 + (endtime.tv_usec - NowTime.tv_usec)); 
+            printf("copy: %ld\n",(endtime.tv_sec - NowTime.tv_sec) * 1000 * 1000 + (endtime.tv_usec - NowTime.tv_usec)); 
             // printf("pool: %d:%d  %d:%d\n",endtime.tv_sec,endtime.tv_usec, NowTime.tv_sec,NowTime.tv_usec); 
 
             printf("==================================\n");         
@@ -108,10 +108,10 @@ namespace malloc_test
             // delete buf[main_int];
 	    }
         gettimeofday(&endtime, NULL);
-        printf("multi_1: %lld\n",(endtime.tv_sec - NowTime.tv_sec) * 1000 * 1000 + (endtime.tv_usec - NowTime.tv_usec)); 
+        printf("multi_1: %ld\n",(endtime.tv_sec - NowTime.tv_sec) * 1000 * 1000 + (endtime.tv_usec - NowTime.tv_usec)); 
         // printf("multi_1: %d:%d  %d:%d\n",endtime.tv_sec,endtime.tv_usec, NowTime.tv_sec,NowTime.tv_usec); 
-        memset(buf, NULL, max);
-        memset(buf_th, NULL, max);
+        memset(buf, 0, max);
+        memset(buf_th, 0, max);
         std::thread first(foo);
         int conut = 0;        
         gettimeofday(&NowTime, NULL);
@@ -140,7 +140,7 @@ namespace malloc_test
         // printf("multi pool: %d:%d  %d:%d\n",endtime.tv_sec,endtime.tv_usec, NowTime.tv_sec,NowTime.tv_usec); 
         first.join();
         gettimeofday(&endtime, NULL);
-        printf("multi pool: %lld conut: %d\n",(endtime.tv_sec - NowTime.tv_sec) * 1000 * 1000 + (endtime.tv_usec - NowTime.tv_usec),conut); 
+        printf("multi pool: %ld conut: %d\n",(endtime.tv_sec - NowTime.tv_sec) * 1000 * 1000 + (endtime.tv_usec - NowTime.tv_usec),conut); 
         printf("==================================\n");    
     }
 
@@ -165,7 +165,7 @@ namespace malloc_test
             }
     	}
         gettimeofday(&endtime, NULL);
-        printf("multi: %lld conut: %d\n",(endtime.tv_sec - NowTime.tv_sec) * 1000 * 1000 + (endtime.tv_usec - NowTime.tv_usec),conut); 
+        printf("multi: %ld conut: %d\n",(endtime.tv_sec - NowTime.tv_sec) * 1000 * 1000 + (endtime.tv_usec - NowTime.tv_usec),conut); 
         // printf("multi: %d:%d  %d:%d\n",endtime.tv_sec,endtime.tv_usec, NowTime.tv_sec,NowTime.tv_usec); 
         printf("==================================\n");      
     }
@@ -186,10 +186,10 @@ namespace malloc_test
             // delete buf[main_int];
 	    }
         gettimeofday(&endtime, NULL);
-        printf("multi_1: %lld\n",(endtime.tv_sec - NowTime.tv_sec) * 1000 * 1000 + (endtime.tv_usec - NowTime.tv_usec)); 
+        printf("multi_1: %ld\n",(endtime.tv_sec - NowTime.tv_sec) * 1000 * 1000 + (endtime.tv_usec - NowTime.tv_usec)); 
         // printf("multi_1: %d:%d  %d:%d\n",endtime.tv_sec,endtime.tv_usec, NowTime.tv_sec,NowTime.tv_usec); 
 
-        memset(buf, NULL, max);
+        memset(buf, 0, max);
 	    main_int=0;
         std::thread first(foo_2);
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
