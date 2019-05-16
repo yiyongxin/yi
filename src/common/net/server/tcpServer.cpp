@@ -17,8 +17,8 @@ inline void libuv_err_str(std::string &err, int errcode)
 
 boost::pool<> tcpServer::_reqpool(sizeof(uv_write_t));
 
-tcpServer::tcpServer(uv_loop_t* loop, char* name)
-    :_newconcb(nullptr), _isinit(false),_loop(loop),_svr_name(name)
+tcpServer::tcpServer(uv_loop_t* loop, const char* name)
+    :_svr_name(name),_loop(loop), _isinit(false),_newconcb(nullptr)
 {
 
 }
@@ -290,7 +290,8 @@ bool tcpServer::send(unsigned int cid, const char* data, size_t len)
     auto itfind = _clienttab.find(cid);
     if (itfind == _clienttab.end())
     {
-        _errstr = "can't find cliend id: " + cid;
+        _errstr = "can't find cliend id: ";
+        _errstr += cid;
         LOGIFS_ERR(_errstr.c_str());
         return false;
     }
@@ -335,7 +336,8 @@ bool tcpServer::deleteClient(unsigned int cid)
     auto itfind = _clienttab.find(cid);
     if (itfind == _clienttab.end()) 
     {
-        _errstr = "can't find client id: " + cid;
+        _errstr = "can't find client id: ";
+        _errstr += cid;
         LOGIFS_ERR(_errstr.c_str());
         // uv_mutex_unlock(&mutex_handle_);
         return false;

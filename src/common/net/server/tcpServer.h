@@ -19,7 +19,7 @@ class tcpServer
 public:
     typedef void (*newcon_cb)(int cid);
 public:
-    tcpServer(uv_loop_t* loop,char* name = "default server");
+    tcpServer(uv_loop_t* loop,const char* name = "default server");
     ~tcpServer();
 private:
     std::string _svr_name;  //该服务的名字

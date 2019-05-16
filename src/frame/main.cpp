@@ -18,4 +18,4 @@ int main(int argc, char *argv[])
     closeLog();
     
     return 1;
-}
+} 

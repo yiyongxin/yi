@@ -13,11 +13,11 @@ set(CMAKE_BUILD_TYPE "Debug")
 message("-- ${CMAKE_BUILD_TYPE}")
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set(PROJECT_OUT_PAHT ../build/Debug)
-    set(LIB_OUT_PAHT ../lib/Debug)
+    set(PROJECT_OUT_PAHT ../build/debug)
+    set(LIB_OUT_PAHT ../build/debug/lib)
 else ()   # release
-    set(PROJECT_OUT_PAHT ../build/Release)
-    set(LIB_OUT_PAHT ../lib/Release)
+    set(PROJECT_OUT_PAHT ../build/release)
+    set(LIB_OUT_PAHT ../build/release/lib)
 endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_OUT_PAHT})
