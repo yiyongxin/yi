@@ -36,6 +36,7 @@ aux_source_directory(../src/protobuf DIR_PROTOBUF)
 # 指定生成目标
 add_executable(yisrv 
                 ../src/frame/main.cpp 
+                ../src/common/log/log.cpp 
                 ${DIR_SERVER}
                 ${DIR_PROTOBUF})
 

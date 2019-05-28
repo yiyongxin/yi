@@ -48,5 +48,5 @@ extern log4cplus::Logger _logger_fatal;
         /*LOG4CPLUS_FATAL(_logger_fatal,__FILE__ << ":" << __LINE__ << " " << __FUNCTION__);*/\
         LOG4CPLUS_FATAL(_logger_fatal,str);\
     }
-    
+
 #endif //LOG_LOG4CLPUS_IFS_H_

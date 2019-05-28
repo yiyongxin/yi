@@ -2,12 +2,13 @@
 #define LOG_H_
 
 #ifdef _LOG4CPLUS
-#include <log4cplus/logger.h>
-#include <log4cplus/configurator.h>
-#include <log4cplus/fileappender.h>
-#include <log4cplus/consoleappender.h>
-#include <log4cplus/layout.h>
-#include <log4cplus/loggingmacros.h> 
+// #include <log4cplus/logger.h>
+// #include <log4cplus/configurator.h>
+// #include <log4cplus/fileappender.h>
+// #include <log4cplus/consoleappender.h>
+// #include <log4cplus/layout.h>
+// #include <log4cplus/loggingmacros.h> 
+#include "log_ifs.h"
 
 log4cplus::Logger _logger_err;
 log4cplus::Logger _logger_debug;

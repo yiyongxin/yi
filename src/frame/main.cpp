@@ -4,7 +4,6 @@
 * date:     2018-04-08
 ****************************************/
 
-#include "../common/log/log.hpp"
 #include "../common/log/log_ifs.h"
 #include "../test/test.h"
 
