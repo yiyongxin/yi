@@ -41,7 +41,7 @@ add_executable(yisrv
                 ${DIR_PROTOBUF})
 
 # add_library(fun SHARED ../src/common/test.cpp)
-add_library(net SHARED ../src/common/net/server/tcpServer.cpp ../src/common/net/server/tcpClientObj.cpp)
+add_library(net SHARED ../src/common/net/server/TcpServer.cpp ../src/common/net/server/TcpClientObj.cpp)
 #设置指定目标使用动态库
 target_link_libraries(yisrv ${CMAKE_DL_LIBS})
 target_link_libraries(yisrv log4cplus)

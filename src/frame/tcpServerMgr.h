@@ -4,7 +4,7 @@
 * date:     2018-03-12
 ****************************************/
 
-#ifndef tcpServerMgr_H_
-#define tcpServerMgr_H_
+#ifndef TcpServerMgr_H_
+#define TcpServerMgr_H_
 
-#endif //tcpServerMgr_H_
+#endif //TcpServerMgr_H_
