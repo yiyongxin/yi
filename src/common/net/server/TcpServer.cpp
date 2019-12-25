@@ -6,7 +6,7 @@
 
 #include <string.h>
 #include "TcpServer.h"
-#include <jemalloc/jemalloc.h>
+// #include <jemalloc/jemalloc.h>
 #include "../../log/log_ifs.h"
 
 inline void libuv_err_str(std::string &err, int errcode)
@@ -15,10 +15,8 @@ inline void libuv_err_str(std::string &err, int errcode)
     err = err + ": " + uv_strerror(errcode);
 }
 
-boost::pool<> TcpServer::_reqpool(sizeof(uv_write_t));
-
 TcpServer::TcpServer(uv_loop_t* loop, const char* name)
-    :_svr_name(name),_loop(loop), _isinit(false),_newconcb(nullptr)
+    :_svr_name(name),_loop(loop), _isinit(false),_acceptcb(nullptr)
 {
 
 }
@@ -104,7 +102,7 @@ bool TcpServer::setnodelay(bool enable)
     return true;
 }
 
-bool TcpServer::setKeepAlive(int enable, unsigned int delay)
+bool TcpServer::setKeepAlive(int enable, uint32_t delay)
 {
     int errcode = uv_tcp_keepalive(&_server, enable , delay);
     if (errcode)
@@ -176,7 +174,7 @@ void TcpServer::accept(uv_stream_t *cliHandle, int status)
     if (!cliHandle->data)
         return;
     TcpServer *server = (TcpServer *)cliHandle->data;
-    unsigned int cid = server->getCid();
+    uint32_t cid = server->getCid();
     LOGIFS_DEBUG("accept cid:" << cid); 
     TcpClientObj* cdata = new TcpClientObj(cid);
     cdata->_server = server;    //保存服务器的信息
@@ -206,14 +204,14 @@ void TcpServer::accept(uv_stream_t *cliHandle, int status)
         LOGIFS_ERR(server->_errstr.c_str());
         return;
     }
-    if (server->_newconcb != NULL)
-        server->_newconcb(cid);
+    if (server->_acceptcb != NULL)
+        server->_acceptcb(server->_svr_name,cid);
     server->_clienttab.insert(std::make_pair(cid,cdata));   //加入到链接队列
     LOGIFS_INFO("new client("<<cdata->_client<<") id="<< cid);
     return;
 }
 
-unsigned int TcpServer::getCid()
+uint32_t TcpServer::getCid()
 {
     while(true)
     {
@@ -249,9 +247,9 @@ void TcpServer::read_cb(uv_stream_t *svrHandle, ssize_t nread, const uv_buf_t* b
         tsvr->send(client->id,buf->base,nread);
     }
 
+    TcpServer *server = (TcpServer *)client->_server;
     if (nread < 0) 
     {
-        TcpServer *server = (TcpServer *)client->_server;
         if (nread == UV_EOF) 
         {
             LOGIFS_WARN("客户端("<<client->id<<")主动断开");
@@ -269,8 +267,8 @@ void TcpServer::read_cb(uv_stream_t *svrHandle, ssize_t nread, const uv_buf_t* b
         return;
     } else if (0 == nread)  {/* Everything OK, but nothing read. */
 
-    } else if (client->_recvcb) 
-        client->_recvcb(client->id,buf->base,nread);
+    } else if (server->_recvcb) 
+        server->_recvcb(server->_svr_name,client->id,buf->base,nread);
 }
 
 bool TcpServer::start(const char *ip, int port, int backlog, bool isipv6)
@@ -285,7 +283,7 @@ bool TcpServer::start(const char *ip, int port, int backlog, bool isipv6)
     return true;
 }
 
-bool TcpServer::send(unsigned int cid, const char* data, size_t len)
+bool TcpServer::send(uint32_t cid, const char* data, size_t len)
 {
     auto itfind = _clienttab.find(cid);
     if (itfind == _clienttab.end())
@@ -297,7 +295,7 @@ bool TcpServer::send(unsigned int cid, const char* data, size_t len)
     }
     TcpClientObj* ttco = itfind->second;
     uv_buf_t buf = uv_buf_init((char*)data,len);
-    int errcode = uv_write((uv_write_t *)_reqpool.malloc(), (uv_stream_t*)ttco->_client, &buf, 1, send_cb);
+    int errcode = uv_write(new uv_write_t(), (uv_stream_t*)ttco->_client, &buf, 1, send_cb);
     if (errcode)
     {
         libuv_err_str(_errstr, errcode);
@@ -315,22 +313,20 @@ void TcpServer::send_cb(uv_write_t *req, int status)
         libuv_err_str(tempServer->_errstr,status);
         LOGIFS_ERR("发送数据有误:"<<tempServer->_errstr.c_str());
     }
-    _reqpool.free(req);
+    delete req;
 }
 
-void TcpServer::setrecv_cb(unsigned int cid,TcpClientObj::srecv_cb cb)
+void TcpServer::setrecv_cb(srecv_cb cb)
 {
-    auto itfind = _clienttab.find(cid);
-    if (itfind != _clienttab.end())
-        itfind->second->_recvcb = cb;
+    _recvcb = cb;
 }
 
-void TcpServer::setnewcon_cb(newcon_cb cb)
+void TcpServer::setaccept_cb(accept_cb cb)
 {
-    _newconcb = cb;
+    _acceptcb = cb;
 }
 
-bool TcpServer::deleteClient(unsigned int cid)
+bool TcpServer::deleteClient(uint32_t cid)
 {
     // uv_mutex_lock(&mutex_handle_);
     auto itfind = _clienttab.find(cid);

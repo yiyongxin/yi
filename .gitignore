@@ -1,11 +1,8 @@
 lib
-cmake/CMakeCache.txt
-cmake/Makefile
-cmake/cmake_install.cmake
-cmake/CMakeFiles
-build/debug/yisrv
+bin/debug/yisrv
 src/test_src
 lib/third_party
-build/debug/log/*
+bin/debug/log/*
 .vscode/ipch
 src/protobuf/*
+build/*

@@ -7,9 +7,9 @@
 #include "TcpClientObj.h"
 #include "stdlib.h"
 
-TcpClientObj::TcpClientObj(unsigned int id)
-    :id(id),_recvcb(nullptr)
+TcpClientObj::TcpClientObj(uint32_t id)
 {
+    id = id;
     _client = (uv_tcp_t*)malloc(sizeof(*_client));
     _client->data = this;
     _readbuf = uv_buf_init((char*)malloc(DEF_BUF_SIZE), DEF_BUF_SIZE);
