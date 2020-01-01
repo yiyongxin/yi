@@ -9,7 +9,7 @@
 
 #include <unordered_map>
 #include <functional>
-#include "libuv/uv.h"
+#include "uv.h"
 #include "TcpClientObj.h"
 
 #define WRITE_POOL_GRAIN_SIZE 1024

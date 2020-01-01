@@ -7,7 +7,7 @@
 #ifndef TcpClientObj_H_
 #define TcpClientObj_H_
 
-#include "libuv/uv.h"
+#include "uv.h"
 
 #define DEF_BUF_SIZE 1024*1024
 

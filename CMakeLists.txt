@@ -15,21 +15,23 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # set(CMAKE_BUILD_TYPE Debug CACHE STRING "set build type to debug")
 # set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -march=native -o3 -pthread -fcoroutines-ts -stdlib=libc++" )
-set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -o3 -pthread" )
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -o3 -pthread -fno-omit-frame-pointer" )
 
 set(CMAKE_BUILD_TYPE "Debug")
 message("-- ${CMAKE_BUILD_TYPE}")
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    set(PROJECT_OUT_PAHT bin/debug)
-    set(LIB_OUT_PAHT bin/debug/lib)
+    set(PROJECT_OUT_PAHT ${PROJECT_SOURCE_DIR}/bin/debug)
+    set(LIB_OUT_PAHT ${PROJECT_SOURCE_DIR}/bin/debug/lib)
 else ()   # release
-    set(PROJECT_OUT_PAHT bin/release)
-    set(LIB_OUT_PAHT bin/release/lib)
+    set(PROJECT_OUT_PAHT ${PROJECT_SOURCE_DIR}/bin/release)
+    set(LIB_OUT_PAHT ${PROJECT_SOURCE_DIR}/bin/release/lib)
 endif()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_OUT_PAHT})
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_OUT_PAHT}) 
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_OUT_PAHT})
+# set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${LIB_OUT_PAHT}) 
+set(LIBRARY_OUTPUT_PATH        ${LIB_OUT_PAHT})
+set(EXECUTABLE_OUTPUT_PATH     ${PROJECT_OUT_PAHT})
 
 function(include_sub_directories_recursively root_dir)
     if (IS_DIRECTORY ${root_dir})               # 当前路径是一个目录吗，是的话就加入到包含目录

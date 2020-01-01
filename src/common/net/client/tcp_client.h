@@ -8,7 +8,7 @@
 #define TCP_CLIENT_H_
 
 #include <string>
-#include "libuv/uv.h"
+#include "uv.h"
 #include "log/log_ifs.h"
 
 extern std::string GetUVError(int errcode);
