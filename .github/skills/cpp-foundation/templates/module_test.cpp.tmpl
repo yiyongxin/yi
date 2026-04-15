@@ -1,0 +1,13 @@
+#include "{{HeaderPath}}"
+
+#include <gtest/gtest.h>
+
+TEST({{ClassName}}Test, RunReturnsFalseWhenNameEmpty) {
+    {{ClassName}} target("");
+    EXPECT_FALSE(target.run());
+}
+
+TEST({{ClassName}}Test, RunReturnsTrueWhenNamePresent) {
+    {{ClassName}} target("demo");
+    EXPECT_TRUE(target.run());
+}

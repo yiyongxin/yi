@@ -1,0 +1,17 @@
+#include "{{HeaderPath}}"
+
+#include <utility>
+
+{{ClassName}}::{{ClassName}}(std::string name)
+    : name_(std::move(name)) {}
+
+bool {{ClassName}}::run() const {
+    if (name_.empty()) {
+        return false;
+    }
+    return true;
+}
+
+const std::string& {{ClassName}}::name() const {
+    return name_;
+}

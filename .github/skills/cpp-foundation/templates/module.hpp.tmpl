@@ -1,0 +1,17 @@
+#pragma once
+
+#include <string>
+
+class {{ClassName}} {
+public:
+    // 构造时注入必要配置。
+    explicit {{ClassName}}(std::string name);
+
+    // 执行核心逻辑，返回是否成功。
+    bool run() const;
+
+    const std::string& name() const;
+
+private:
+    std::string name_;
+};
