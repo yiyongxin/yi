@@ -29,6 +29,16 @@ description: "Use when: starting a new C++ module, adding a new class pair (.hpp
 5. 若要本地联调，服务仓库可通过 `FetchContent` 的 `SOURCE_DIR` 指向本地同级路径覆盖远程依赖。
 6. 输出改动摘要与验证命令（见下方验证步骤）。
 
+## 快速核对清单（创建或修改 `yi_core` 时）
+
+- [ ] `include/yi/` 下是否只包含对外头文件并遵循命名约定？
+- [ ] `CMakeLists.txt` 是否使用 `project(yi_core VERSION 0.0.1)` 或已更新的语义化版本？
+- [ ] 是否导出 `YiCoreTargets` 并提供 `YiCoreConfig.cmake` / `YiCoreConfigVersion.cmake`？
+- [ ] 是否在 `cmake/` 提供安装模板并在 README 说明 `find_package(yi_core)` 的使用？
+- [ ] 是否有最小化示例（`examples/`）和测试（`tests/`）？
+
+请把 `core/CORE_STRUCTURE.md` 作为单一事实来源，任何对结构或导出约定的更改需先更新该文件并经过基础团队审阅。
+
 ## 产出标准
 
 - 项目名与库名统一使用 `yi_core` / `yi_modules` / `user-service`。
